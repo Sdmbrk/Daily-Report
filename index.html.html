@@ -1,0 +1,2291 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Daily Manpower Report · MGC</title>
+<meta name="description" content="MGC MEP daily manpower and progress report">
+<meta name="theme-color" content="#0f2a44">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MEP Report">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root{--ink:#0f172a;--mut:#64748b;--line:#e2e8f0;--bg:#f1f5f9;--navy:#2a3a9a;--navy2:#222f80;--ok:#059669;--bad:#b91c1c}
+*{box-sizing:border-box}
+body{margin:0;font:13px/1.45 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+[hidden]{display:none!important}
+.top{background:linear-gradient(135deg,#0f2a44 0%,#134e4a 100%);color:#fff;padding:10px 24px 10px}
+.top-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.eyebrow{color:#fca5a5;font-family:ui-monospace,Consolas,monospace;letter-spacing:.14em;font-size:10px}
+.top h1{margin:0;font-size:17px;font-weight:800;letter-spacing:.01em;line-height:1.2}
+.top .sub{color:#cbd5e1;font-size:12px;margin-top:0;line-height:1.2}
+.ver{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:11px;color:#cbd5e1;width:100%;padding-top:8px;margin-top:2px;border-top:1px solid rgba(255,255,255,.15)}
+.ver .ghostbtn{background:transparent;border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:7px;padding:3px 9px;cursor:pointer;font:inherit;font-size:11px}
+.dbbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 8px;padding:6px 8px;background:#fff;border:1px solid #e2e8f0;border-radius:10px}
+.dbbar .dbbar-lbl{font-size:11px;font-weight:700;color:var(--mut);letter-spacing:.08em;text-transform:uppercase;margin-right:4px}
+.dbbar .btn{padding:5px 10px;font-size:12px}
+.wrap{padding:14px 24px 40px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid #cbd5e1;background:#fff;font:inherit;font-weight:600;cursor:pointer;color:var(--ink);text-decoration:none}
+.btn:hover{background:#f8fafc}
+.btn.p{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.p:hover{background:var(--navy2)}
+.btn.ghost{background:transparent;border-color:var(--line);color:#475569}
+.btn.danger{color:var(--bad);border-color:#fecaca}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.inp{padding:7px 9px;border:1px solid #cbd5e1;border-radius:7px;font:inherit;font-size:13px;background:#fff;color:var(--ink);min-width:0}
+.inp:focus,.cell:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px rgba(42,58,154,.12)}
+.inp:disabled{background:#f8fafc;color:#94a3b8}
+.inp.num{width:70px;text-align:right}
+label.fl,.lbl{display:flex;flex-direction:column;font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;gap:4px}
+.cell{width:100%;border:1px solid transparent;background:transparent;padding:5px 6px;border-radius:6px;font:inherit;color:var(--ink)}
+.cell:hover{border-color:#cbd5e1;background:#fff}
+.x{border:0;background:none;color:var(--bad);font-size:15px;cursor:pointer;padding:0 6px;font-weight:700}
+.x.plus{color:var(--navy);font-size:12px;font-weight:700}
+.x.plus.addth{background:var(--navy);color:#fff;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:700;letter-spacing:.03em;margin-right:4px;box-shadow:0 1px 2px rgba(15,23,42,.18);transition:background .15s,transform .1s;white-space:nowrap}
+.x.plus.addth:hover{background:var(--navy2)}
+.x.plus.addth:active{transform:scale(.96)}
+.x.plus.addth:focus-visible{outline:2px solid var(--navy);outline-offset:2px}
+.empty{color:var(--mut);padding:24px;background:#fff;border-radius:12px;border:1px dashed #cbd5e1}
+.muted{color:#94a3b8;font-size:12px}
+.cl-panel{background:#fff;border-radius:12px;padding:16px 18px;margin-bottom:18px;box-shadow:0 2px 8px rgba(15,23,42,.06);border-left:4px solid var(--navy)}
+.cl-panel h3{margin:0 0 6px;font-size:15px}
+.cl-panel ul{margin:6px 0 0 18px;padding:0}
+.cl-panel li{margin:3px 0}
+/* Projects window (matches the MGC screenshot) */
+.ptitle{margin:4px 0 14px;font-size:28px;font-weight:800;letter-spacing:.02em}
+.pactions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding-bottom:14px;border-bottom:3px solid var(--navy);margin-bottom:18px}
+.prj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.prj-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 2px 8px rgba(15,23,42,.06);display:flex;flex-direction:column}
+.prj-card.on{border-color:var(--navy);box-shadow:0 0 0 2px rgba(42,58,154,.15)}
+.thumb{display:flex;gap:2px;height:150px;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;align-items:center;justify-content:center}
+.thumb img{display:block;max-width:100%;max-height:100%;object-fit:contain}
+.thumb .strip{display:flex;gap:2px;height:96px;width:100%;padding:8px;background:#f8fafc}
+.thumb .strip i{display:block;border-radius:3px;min-width:3px}
+.thumb em{color:#94a3b8;font-style:normal;font-size:12px}
+.prj-card h3{font-size:16px;letter-spacing:.04em;font-weight:800;margin:12px 0 4px}
+.meta{color:var(--mut);font-size:12.5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 6px}
+.tchip{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--c);color:#fff}
+.owner{color:var(--mut);font-size:12px;margin-bottom:12px}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+.ed-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:20px;box-shadow:0 2px 8px rgba(15,23,42,.06)}
+.ed-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.ed-head h3{margin:2px 0 0;font-size:18px}
+.ed-kicker{font-family:ui-monospace,Consolas,monospace;font-size:11px;letter-spacing:.14em;color:#b5452f}
+.ed-btns{display:flex;gap:8px}
+.ed-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px 14px}
+.ptinfo{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:#475569;margin-bottom:4px}
+.ed-sub{margin:18px 0 8px;font-weight:700;font-size:14px}
+.maps{display:flex;flex-wrap:wrap;gap:10px}
+.mapitem{width:220px;border:1px solid var(--line);border-radius:10px;padding:6px;background:#fff}
+.mapitem img{display:block;width:100%;height:130px;object-fit:contain;background:#fff}
+.mapitem .mrow{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:11.5px;margin-top:4px}
+.mapitem .mrow span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dropline{margin-top:8px}
+.th-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.th-list.edit{grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
+.th-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.th-card.edit{border-color:#c7d2fe}
+.th-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.th-top b{font-size:14px}
+.th-tot{font-size:12px;font-weight:800;background:#0f172a;color:#fff;border-radius:999px;padding:2px 9px;min-width:30px;text-align:center}
+.th-chips{display:flex;flex-wrap:wrap;gap:4px}
+.th-chips .tchip{font-size:10.5px;padding:2px 7px}
+.th-name{font-weight:700;flex:1;min-width:0;padding:4px 6px}
+.th-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.tin{display:flex;align-items:center;justify-content:space-between;gap:6px;border-left:4px solid var(--c);background:#f8fafc;border-radius:8px;padding:4px 8px;font-size:11px;font-weight:700;color:#334155}
+.tin input{width:60px;text-align:right;padding:3px 4px;border:1px solid #cbd5e1;border-radius:6px;font:inherit;font-size:12px;background:#fff}
+.blk-h{font-size:10.5px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin:10px 0 4px;display:flex;justify-content:space-between;align-items:center}
+.blk{display:flex;gap:6px;align-items:center;margin-bottom:4px}
+.blk input.nm{flex:1;min-width:0;padding:4px 6px;border:1px solid #cbd5e1;border-radius:6px;font:inherit;font-size:12px}
+.blk input.bv{width:70px;padding:4px 6px;border:1px solid #cbd5e1;border-radius:6px;font:inherit;font-size:12px;text-align:right}
+.ptotals{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.tbtn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:7px 12px;background:var(--c);color:#fff;font:inherit;font-size:12px;font-weight:700}
+.tbtn b{background:rgba(255,255,255,.25);border-radius:999px;padding:1px 8px}
+.tbtn.all{background:#0f172a}
+.ed-actions{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.hint{color:var(--mut);font-size:12px}
+.ed-danger{margin-top:22px;border:1px solid #fecaca;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.ed-danger-row{display:flex;gap:8px;flex-wrap:wrap}
+.ed-danger span{color:var(--mut);font-size:12px;margin-left:8px}
+/* Project daily report */
+.ph-top{display:flex;align-items:center;gap:16px;margin-bottom:14px;flex-wrap:wrap}
+.ph-name{margin:2px 0 0;font-size:24px;font-weight:800;letter-spacing:.02em}
+.daybar{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px}
+.daybar .exp{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.wd-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.wd{border:1px solid #cbd5e1;background:#fff;border-radius:10px;padding:8px 14px;font:inherit;font-weight:700;cursor:pointer;color:var(--ink);border-top:4px solid var(--c)}
+.wd.on{background:var(--c);color:#fff;border-color:var(--c)}
+.wd b{margin-left:8px;font-size:11px;opacity:.85}
+.rep{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 2px 8px rgba(15,23,42,.06);overflow:hidden}
+.rep-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--line);background:#f8fafc}
+.rep-head b{font-size:15px;letter-spacing:.02em}
+.rep-head .lbl input{width:220px}
+.sumchips{display:flex;gap:8px;flex-wrap:wrap;font-size:12px;color:#334155}
+.sumchips span{background:#fff;border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+.tbl{overflow:auto;max-height:72vh}
+table{width:100%;border-collapse:collapse}
+th{background:#f8fafc;font-size:10.5px;text-transform:uppercase;letter-spacing:.03em;color:#475569;text-align:center;padding:7px 6px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:2;white-space:nowrap}
+th.l,td.l{text-align:left}
+td{padding:3px 5px;border-bottom:1px solid #eef2f6;vertical-align:middle}
+td.n,th.n{text-align:right}
+td.c{text-align:center}
+td.gname{font-weight:800;background:var(--tint);font-size:12px;min-width:150px;white-space:normal;border-right:1px solid var(--line)}
+tr.orph td{color:#92400e}
+td.sname{min-width:200px;white-space:normal}
+td.mainpct b{background:#ecfdf5;color:#065f46;border-radius:6px;padding:3px 7px;font-size:12.5px}
+td.mainpct b:empty{display:none}
+tr.gfirst td{border-top:2px solid #cbd5e1}
+tfoot td{background:#f8fafc;font-weight:700;border-top:2px solid #cbd5e1}
+select.inp{max-width:200px}
+td select.inp{min-width:112px}
+td select.inp:disabled{min-width:84px}
+td select.inp,td input.inp{width:100%;padding:4px 5px;font-size:12px}
+td input.inp.num{width:62px}
+td input.rem{min-width:160px}
+.bad-row td{background:#fff7ed}
+.addbar{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:14px}
+.band td{background:#0f172a;color:#fff;font-weight:800;font-size:12px;letter-spacing:.04em;padding:7px 10px}
+tr.subh td{background:#eef2ff;font-weight:700;color:#1e293b;padding:6px 10px}
+tr.subtot td{background:#f8fafc;font-weight:700;text-align:right;padding:5px 10px}
+tr.gt td{background:#e2e8f0;font-weight:800;text-align:right;padding:8px 10px}
+/* Activity and subcontractor databases */
+.act-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:14px}
+.act-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.act-h{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.act-h .cell{font-weight:800;font-size:14px;flex:1}
+.badge{font-size:11px;font-weight:700;border-radius:999px;padding:3px 9px;white-space:nowrap}
+.badge.ok{background:#dcfce7;color:#166534}
+.badge.bad{background:#fee2e2;color:#991b1b}
+.act-card table{font-size:12.5px}
+.act-card th{position:static}
+.addrow{display:flex;gap:6px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.addrow .inp:first-child{flex:1;min-width:160px}
+.dbl{margin-bottom:12px}
+.pill-cb{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;margin-right:10px}
+.discbox{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 16px;border-radius:10px;box-shadow:0 8px 24px rgba(15,23,42,.25);z-index:50;font-weight:600}
+.toast.err{background:#b91c1c}
+.sess[hidden]{display:none}
+.sess{display:inline-flex;gap:6px;align-items:center;font-size:12px;color:#cbd5e1}
+.sess b{color:#fff}
+.adm-sec{margin-top:16px;background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px}
+.adm-sec h3{margin:0 0 8px}
+.acc-table{width:100%;border-collapse:collapse;font-size:13px}
+.acc-table th,.acc-table td{border-bottom:1px solid #e2e8f0;padding:8px 6px;text-align:center}
+.acc-table th.l,.acc-table td.l{text-align:left}
+.login-card{max-width:460px;margin:24px auto;background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:22px}
+.login-card h2{margin:0 0 6px}
+.blk.mixed{display:block;padding:8px}
+.blk.mixed .blk-row{display:flex;gap:6px;align-items:center}
+.blk.mixed .blk-row .nm{flex:1;min-width:0}
+.blk.mixed .mix{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:6px}
+.blk.mixed .mix .tin input{width:100%}
+.legend{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 12px}
+.lg{display:inline-flex;align-items:center;gap:6px;border:1px solid #e2e8f0;border-radius:999px;padding:4px 10px;background:#fff;font-size:12px}
+.lg i{width:14px;height:14px;border-radius:4px;display:inline-block}
+.lg input[type=color]{width:26px;height:22px;padding:0;border:0;background:none}
+.legend .addrow{margin-top:0}
+@media (max-width:760px){.wrap{padding:16px 12px 32px}.top{padding:18px 14px 0}.act-grid{grid-template-columns:1fr}.prj-grid{grid-template-columns:1fr}}
+.no{display:inline-block;min-width:34px;font-weight:700;color:#475569;font-variant-numeric:tabular-nums}
+.hub{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin-top:20px}
+.hub-card{position:relative;overflow:hidden;text-align:left;font:inherit;cursor:pointer;display:flex;flex-direction:column;gap:14px;padding:22px 22px 18px;border-radius:16px;border:1px solid color-mix(in srgb,var(--c) 22%,#e2e8f0);background:linear-gradient(160deg,#fff 55%,var(--t));box-shadow:0 1px 2px rgba(15,23,42,.06),0 8px 22px -12px color-mix(in srgb,var(--c) 45%,transparent);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.hub-card::before{content:"";position:absolute;left:0;top:0;right:0;height:5px;background:linear-gradient(90deg,var(--c),color-mix(in srgb,var(--c) 45%,#fff))}
+.hub-card:hover{transform:translateY(-3px);box-shadow:0 2px 4px rgba(15,23,42,.06),0 18px 34px -14px color-mix(in srgb,var(--c) 55%,transparent);border-color:color-mix(in srgb,var(--c) 45%,#fff)}
+.hub-card:focus-visible{outline:3px solid color-mix(in srgb,var(--c) 40%,#fff);outline-offset:2px}
+.hub-ico{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;background:var(--c);color:#fff;box-shadow:0 8px 16px -8px var(--c)}
+.hub-ico svg{width:26px;height:26px}
+.hub-txt{display:flex;flex-direction:column;gap:4px}
+.hub-txt em{font-style:normal;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--c)}
+.hub-txt b{font-size:18px;line-height:1.25;color:#0f2a44}
+.hub-txt > span{color:#64748b;font-size:13px;line-height:1.45}
+.hub-go{align-self:flex-start;margin-top:auto;font-size:13px;font-weight:700;color:var(--c);padding:6px 12px;border-radius:999px;background:var(--t)}
+.lsup{margin-top:16px}
+.lsup-h{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin:0 0 8px}
+.psec-bar{margin:12px 0;position:sticky;top:0;z-index:30;padding:8px 0;background:#f1f5f9}
+.soon{margin-top:16px;background:#fff;border:1px dashed #cbd5e1;border-radius:12px;padding:24px;color:#475569}
+.soon h3{margin:0 0 6px;color:#0f2a44}
+.secp{display:inline-flex;gap:4px;align-items:center;white-space:nowrap;cursor:pointer}
+.secs{display:flex;flex-direction:column;gap:3px;margin-top:6px;align-items:flex-start;font-size:12px;color:#475569}
+.secs label{display:flex;gap:4px;align-items:center;white-space:nowrap;cursor:pointer}
+.secs label:has(input:disabled){opacity:.45;cursor:default}
+.pm-wrap{margin-top:8px;background:#fff;border:1px solid #e2e8f0;border-radius:14px;overflow:hidden}
+.pm-frame{display:block;width:100%;height:calc(100vh - 170px);min-height:720px;border:0;background:#fff}
+.pm-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ph-compact{gap:8px;margin-bottom:8px;flex-wrap:nowrap}
+.ph-compact .ph-title{min-width:0}
+.ph-compact .eyebrow{display:block;line-height:1.2}
+.ph-compact .ph-name{margin:0;font-size:18px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pm-spacer{flex:1}
+.pg-outer{display:flex;align-items:stretch;gap:6px}
+.pg-wrap{flex:1;min-width:0;overflow:auto;max-height:72vh;background:#fff;border:1px solid var(--line);border-radius:12px}
+.pg-arrow{flex:0 0 34px;align-self:center;height:56px;border:1px solid #cbd5e1;background:#fff;border-radius:10px;font-size:22px;font-weight:700;line-height:1;cursor:pointer;color:var(--navy)}
+.pg-arrow:hover{background:#eef2ff}
+.pg-tbl{border-collapse:separate;border-spacing:0;font-size:12px}
+.pg-tbl th,.pg-tbl td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:4px 3px;vertical-align:top;min-width:46px;background:#fff}
+.pg-tbl thead th{position:sticky;top:0;z-index:2;background:#f8fafc;text-align:left;font-weight:700}
+.pg-tbl thead tr:first-child th{z-index:3}
+.pg-tbl .pg-first{position:sticky;left:0;z-index:1;min-width:150px;font-weight:700;background:#f8fafc}
+.pg-tbl thead .pg-first{z-index:4}
+.pg-tbl .pg-main{background:#e0e7ff;color:#1e1b4b;font-size:11px}
+.pg-tbl .pg-sub{font-weight:600;min-width:60px;max-width:80px;white-space:normal;font-size:11px}
+.pg-pct{display:flex;align-items:center;gap:2px;white-space:nowrap}
+.pg-pct::after{content:'%';font-size:12px;font-weight:600;color:#334155}
+.pg-in{width:34px;padding:3px 2px;font-size:12px;text-align:left;-moz-appearance:textfield}
+.pg-in::-webkit-inner-spin-button,.pg-in::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.pg-left{font-size:10px;color:var(--mut);margin-top:2px;white-space:normal;line-height:1.2}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-row">
+    <div>
+      <div class="eyebrow">MODUN GULF BUILDING CONTRACTING (MGC) · MEP DEPARTMENT</div>
+      <h1 id="pageTitle">Daily Manpower Report</h1>
+      <div class="sub" id="pageSub">Choose a project to open its daily report.</div>
+      </div>
+    </div>
+    <div class="ver"><span>Version <b id="verNo"></b></span><button class="ghostbtn" id="btnUndo" title="Undo (Ctrl+Z)">↶ Undo</button><button class="ghostbtn" id="btnRedo" title="Redo (Ctrl+Y)">↷ Redo</button><button class="ghostbtn" id="btnLog">Change log</button><button class="ghostbtn" id="btnAdmin">Admin</button><span class="sess" id="sessInfo" hidden><b id="sessWho"></b><button class="ghostbtn" id="btnSignout">Sign out</button></span></div>
+  </div>
+</header>
+<main class="wrap">
+  <div id="clPanel" hidden></div>
+  <section id="v-projects" class="view"></section>
+  <section id="v-project" class="view" hidden></section>
+  <section id="v-activity" class="view" hidden></section>
+  <section id="v-subdb" class="view" hidden></section>
+  <section id="v-labdb" class="view" hidden></section>
+  <section id="v-login" class="view" hidden></section>
+  <section id="v-admin" class="view" hidden></section>
+</main>
+<div id="toast" class="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+<script>
+/* ============ App version and change log (bump APP_VERSION and add an entry on every change) ============ */
+const APP_VERSION = '1.50';
+const CHANGELOG = [
+  {v: '1.50', d: '2026-11-16', notes: [
+    'Daily Manpower Report edition: a single HTML file with the Daily Manpower Report only. It includes Progress by Activity, the activity, subcontractor and labour databases, PDF and Excel export, and the .md import. This edition has its own change log, starting at 1.50.',
+  ]},
+];
+
+/* ============ Constants ============ */
+const KEY = 'mepDailyReport.v2';
+const TYPES = [['3BR','#4a7fe0'],['4BR','#3f9b5b'],['5BR','#e0813f'],['4BR-LUX','#7c5cd6'],['5BR-LUX','#c84b72'],['4BR-STANDALONE','#b8923a'],['3BR-LUX','#38bdf8']];
+const TC = Object.fromEntries(TYPES);
+// Each project has its own villa types and colours (p.types = [[name, colour], ...]).
+// PALP is the project being drawn; COL and PT read its list.
+let PALP = null;
+function PT(p){ return (p && p.types) || TYPES; }
+function COL(k){ const e = PALP && PALP.types && PALP.types.find(x => x[0] === k); return e ? e[1] : (TC[k] || '#64748b'); }
+// Make sure a project has a type list and that every type used by its THs and blocks is in it.
+function ensureTypes(p){
+  p.types = (p.types || TYPES.map(([k, c]) => [k, c])).map(([k, c]) => [k, c]);
+  const have = new Set(p.types.map(x => x[0]));
+  const add = k => { if (k && !have.has(k)) { p.types.push([k, TC[k] || '#64748b']); have.add(k); } };
+  (p.ths || []).forEach(t => {
+    Object.keys(t.v || {}).forEach(add);
+    (t.blocks || []).forEach(b => Object.keys(b.v || {}).forEach(add));
+  });
+}
+// Legend: colour of each villa type in the project, with villa counts. Editable colours, add and remove unused types.
+// Only the villa types that apply to this project are shown: types with at least one villa,
+// plus types the user added by hand (p.keep) so a new type stays visible until it is used.
+function shownTypes(p){
+  const used = ptypes(p), keep = p.keep || [];
+  return PT(p).filter(([k]) => (used[k] || 0) > 0 || keep.includes(k));
+}
+function legendHtml(p, edit){
+  const used = ptypes(p);
+  const rows = shownTypes(p).map(([k, c]) => edit
+    ? `<span class="lg"><input type="color" data-tc="${esc(k)}" value="${esc(c)}" title="Change colour"><b>${esc(k)}</b><span class="muted">${used[k] || 0} villas</span>${used[k] ? '' : `<button class="x" data-p="deltype" data-k="${esc(k)}" title="Remove this unused type">×</button>`}</span>`
+    : `<span class="lg"><i style="background:${esc(c)}"></i><b>${esc(k)}</b><span class="muted">${used[k] || 0}</span></span>`).join('');
+  return `<div class="legend">${rows}${edit ? `<div class="addrow"><input class="inp" id="newTypeName" placeholder="New villa type, e.g. 2BR" style="width:180px"><input type="color" id="newTypeCol" value="#6b7280" title="Colour"><button class="btn" data-p="addtype">+ Add villa type</button></div>` : ''}</div>`;
+}
+const DISCS = [
+  {k:'EL', n:'Electrical', letter:'X', sheet:'EL', col:'#f59e0b', tint:'#fef3c7', dark:'#92400e', rt:[254,243,199], rd:[146,64,14],
+   mgc:[['mch','CHARGE HAND'],['mt','ELECTRICIAN'],['ma','ELECTRICAL ASST.']], sup:[['st','ELECTRICIAN'],['sh','HELPER']]},
+  {k:'PL', n:'Plumbing', letter:'Y', sheet:'PL', col:'#0ea5e9', tint:'#e0f2fe', dark:'#1e608c', rt:[219,234,254], rd:[30,96,140],
+   mgc:[['mch','CHARGE HAND'],['mt','PLUMBER'],['ma','PLUMBER ASST.']], sup:[['st','PLUMBER'],['sh','HELPER']]},
+  {k:'HV', n:'HVAC', letter:'V', sheet:'HVAC', col:'#8b5cf6', tint:'#ede9fe', dark:'#4c3e8c', rt:[237,233,254], rd:[76,62,140],
+   mgc:[['mch','CHARGE HAND'],['mt','HVAC TECH'],['ma','HVAC ASST.']], sup:[['st','ELECTRICIAN'],['sh','HELPER']]}
+];
+const DISC_BY = Object.fromEntries(DISCS.map(d => [d.k, d]));
+const SUB_DISCS = [...DISCS.map(d => ({k: d.k, n: d.n, col: d.col})), {k:'LPG', n:'LPG', col:'#64748b'}];
+const SUB_BY = Object.fromEntries(SUB_DISCS.map(d => [d.k, d]));
+const LAB = ['mch','mt','ma','st','sh'];
+const LAB_MGC = ['mch','mt','ma'];   // on the activity lines
+const LAB_SUP = ['st','sh'];          // in the labour supplier section
+const LSUP_HEAD = {st: 'TECHNICIAN', sh: 'HELPER'};   // column headings for a labour supplier
+const LAB_TITLE = {mch:'Charge hand', mt:'Tech', ma:'Asst.', st:'Tech', sh:'Helper'};
+
+/* Projects seeded from the Taormina daily report and progress map (TH villa counts match the screenshot). */
+const SEED_PROJECTS = /*PROJECTS_SEED*/[{"id": "tv1", "name": "Taormina Village-01", "kind": "Townhouses Community (G+2)", "owner": "Reportage Prime Properties", "consultant": "IEB Architectural Design Consultancy", "contractor": "Modun Gulf Building Contracting L.L.C", "asof": "2026-11-11", "maps": [], "ths": [{"th": "TH-R01", "v": {"3BR": 18}, "blocks": []}, {"th": "TH-R02", "v": {"3BR": 26}, "blocks": []}, {"th": "TH-R03", "v": {"3BR": 14}, "blocks": []}, {"th": "TH-R04", "v": {"3BR": 18}, "blocks": []}, {"th": "TH-R05", "v": {"3BR": 28}, "blocks": []}, {"th": "TH-R06", "v": {"3BR": 28}, "blocks": []}, {"th": "TH-R07", "v": {"5BR-LUX": 12}, "blocks": []}, {"th": "TH-R08", "v": {"5BR-LUX": 12}, "blocks": []}, {"th": "TH-R09", "v": {"5BR-LUX": 7, "4BR-STANDALONE": 2}, "blocks": []}, {"th": "TH-R10", "v": {"3BR": 20}, "blocks": []}, {"th": "TH-R11", "v": {"3BR": 18}, "blocks": []}, {"th": "TH-R12", "v": {"3BR": 10}, "blocks": []}, {"th": "TH-R13", "v": {"3BR": 14}, "blocks": []}, {"th": "TH-R14", "v": {"3BR": 18}, "blocks": []}, {"th": "TH-R15", "v": {"4BR": 26}, "blocks": []}, {"th": "TH-R16", "v": {"5BR-LUX": 3}, "blocks": []}, {"th": "TH-R17", "v": {"4BR-LUX": 16}, "blocks": []}, {"th": "TH-R18", "v": {"3BR": 4}, "blocks": []}, {"th": "TH-R19", "v": {"3BR": 18}, "blocks": []}, {"th": "TH-R20", "v": {"3BR": 18}, "blocks": []}, {"th": "TH-R21", "v": {"3BR": 6}, "blocks": []}, {"th": "TH-R22", "v": {"3BR": 10}, "blocks": []}, {"th": "TH-R23", "v": {"3BR": 12}, "blocks": []}, {"th": "TH-R24", "v": {"3BR": 10}, "blocks": []}, {"th": "TH-R25", "v": {"4BR": 26}, "blocks": []}, {"th": "TH-R26", "v": {"3BR": 14}, "blocks": []}, {"th": "TH-R27", "v": {"3BR": 6}, "blocks": []}, {"th": "TH-R28", "v": {"3BR": 8}, "blocks": []}, {"th": "TH-R29", "v": {"3BR": 18}, "blocks": []}, {"th": "TH-R30", "v": {"3BR": 18}, "blocks": []}, {"th": "TH-R31", "v": {"3BR": 26}, "blocks": []}, {"th": "TH-R32", "v": {"4BR": 24}, "blocks": []}, {"th": "TH-R33", "v": {"4BR": 10, "3BR": 12}, "blocks": []}]}, {"id": "tv2", "name": "Taormina Village-02", "kind": "Townhouses Community", "owner": "Reportage", "consultant": "Bonyan Engineering Consultancy", "contractor": "Modun Gulf Building Contracting L.L.C", "asof": "2026-11-11", "maps": [], "ths": [{"th": "TH-R01", "v": {"4BR-LUX": 14}, "blocks": []}, {"th": "TH-R02", "v": {"4BR-LUX": 16}, "blocks": []}, {"th": "TH-R03", "v": {"4BR": 16}, "blocks": []}, {"th": "TH-R04", "v": {"4BR": 16}, "blocks": []}, {"th": "TH-R05", "v": {"4BR": 12}, "blocks": []}, {"th": "TH-R06", "v": {"4BR": 14}, "blocks": []}, {"th": "TH-R07", "v": {"4BR": 4}, "blocks": []}, {"th": "TH-R08", "v": {"4BR": 16}, "blocks": []}, {"th": "TH-R09", "v": {"4BR": 16}, "blocks": []}, {"th": "TH-R10", "v": {"4BR": 6}, "blocks": []}, {"th": "TH-R11", "v": {"4BR": 8}, "blocks": []}, {"th": "TH-R12", "v": {"4BR": 20}, "blocks": []}, {"th": "TH-R13", "v": {"4BR": 20}, "blocks": []}, {"th": "TH-R14", "v": {"3BR-LUX": 15}, "blocks": []}, {"th": "TH-R15", "v": {"3BR-LUX": 15}, "blocks": []}, {"th": "TH-R16", "v": {"4BR": 14}, "blocks": []}, {"th": "TH-R17", "v": {"4BR": 14}, "blocks": []}, {"th": "TH-R18", "v": {"4BR": 16}, "blocks": []}, {"th": "TH-R19", "v": {"4BR": 16}, "blocks": []}, {"th": "TH-R20", "v": {"4BR": 18}, "blocks": []}, {"th": "TH-R21", "v": {"4BR": 22}, "blocks": []}]}, {"id": "rh1", "name": "Reportage Hills", "kind": "Townhouses Community", "owner": "Reportage", "consultant": "Touch Consultancy", "contractor": "Modun Gulf Building Contracting L.L.C", "asof": "2026-11-14", "maps": [], "ths": [{"th": "RH-01", "v": {"3BR": 16}, "blocks": []}, {"th": "RH-02", "v": {"3BR": 16}, "blocks": []}, {"th": "RH-03", "v": {"3BR": 16}, "blocks": []}, {"th": "RH-04", "v": {"3BR": 16}, "blocks": []}, {"th": "RH-05", "v": {"3BR": 14}, "blocks": []}, {"th": "RH-06", "v": {"3BR": 14}, "blocks": []}, {"th": "RH-07", "v": {"3BR": 14}, "blocks": []}, {"th": "RH-08", "v": {"3BR": 14}, "blocks": []}, {"th": "RH-09", "v": {"3BR": 14}, "blocks": []}, {"th": "RH-10", "v": {"5BR": 8}, "blocks": []}, {"th": "RH-11", "v": {"5BR": 4}, "blocks": []}, {"th": "RH-12", "v": {"5BR": 44}, "blocks": []}, {"th": "RH-13", "v": {"3BR": 14}, "blocks": []}, {"th": "RH-14", "v": {"3BR": 14}, "blocks": []}, {"th": "RH-15", "v": {"3BR": 14}, "blocks": []}, {"th": "RH-16", "v": {"4BR": 14}, "blocks": []}, {"th": "RH-17", "v": {"4BR": 12}, "blocks": []}, {"th": "RH-18", "v": {"3BR": 28}, "blocks": []}, {"th": "RH-19", "v": {"3BR": 24}, "blocks": []}, {"th": "RH-20", "v": {"3BR": 28}, "blocks": []}, {"th": "RH-21", "v": {"4BR": 4}, "blocks": []}, {"th": "RH-22", "v": {"5BR": 36}, "blocks": []}, {"th": "RH-23", "v": {"3BR": 44}, "blocks": []}, {"th": "RH-24", "v": {"3BR": 44}, "blocks": []}, {"th": "RH-25", "v": {"3BR": 44}, "blocks": []}, {"th": "RH-26", "v": {"3BR": 44}, "blocks": []}, {"th": "RH-27", "v": {"3BR": 28}, "blocks": []}, {"th": "RH-28", "v": {"3BR": 24}, "blocks": []}, {"th": "RH-29", "v": {"4BR": 12}, "blocks": []}, {"th": "RH-30", "v": {"4BR": 14}, "blocks": []}, {"th": "RH-31", "v": {"3BR": 28}, "blocks": []}, {"th": "RH-32", "v": {"3BR": 44}, "blocks": []}, {"th": "RH-33", "v": {"3BR": 44}, "blocks": []}, {"th": "RH-34", "v": {"3BR": 44}, "blocks": []}, {"th": "RH-35", "v": {"3BR": 44}, "blocks": []}, {"th": "RH-36", "v": {"3BR": 28}, "blocks": []}, {"th": "RH-37", "v": {"3BR": 28}, "blocks": []}, {"th": "RH-38", "v": {"4BR": 10}, "blocks": []}]}];
+
+const SEED_SUBS = [
+  ['s1','MEEZANU ZAHRA TECHNICAL SERVICES',['PL']],
+  ['s2','ZALABYA TECHNICAL SERVICES',['PL']],
+  ['s3','NAJMAT ABU HAIL TECHNICAL SERVICES',['EL','PL']],
+  ['s4','NIGHT FORCE PROJECT MANAGEMENT',['EL']],
+  ['s5','ARD NAYEF TECHNICAL SERVICES',['EL']],
+  ['s6','AL FANAR',['LPG']]
+];
+
+// Split a total of 100 equally across names; the last item takes the rounding remainder.
+function EQ(names){
+  const base = Math.floor(10000 / names.length) / 100;
+  const out = names.map(n => [n, base]);
+  out[out.length - 1][1] = +(100 - base * (names.length - 1)).toFixed(2);
+  return out;
+}
+// Main activity -> [sub activity, weightage %]. Electrical and Plumbing weights are from the MGC sheet.
+// HVAC has no weights in the sheet, so they are split equally and must be confirmed in the Activity database.
+const ACT_SEED = {
+  EL: [
+    ['UNDERGROUND', [['TIE BEAM WORKS',50],['U/G WORKS',40],['ROPE PULLING & PROTECTION',5],['MDB & MC SLEEVE INSTALLATION IN TIE BEAM',5]]],
+    ['EXTERNAL WORKS', [['PIPING FOR GAS METER',25],['EXTERNAL PIPING - TEL & EL',75]]],
+    ['GF SLAB WORKS', [['RISER SLEEVE WORKS',10],['MAINTENANCE',5],['SLAB PIPING',85]]],
+    ['1F SLAB WORKS', [['RISER SLEEVE WORKS',10],['MAINTENANCE',5],['SLAB PIPING',85]]],
+    ['2F SLAB WORKS', [['RISER SLEEVE WORKS',10],['MAINTENANCE',5],['SLAB PIPING',85]]],
+    ['1ST FIX WORKS', [['DB RISER PIPES',10],['BACKBOX & PIPING',85],['COLUMN WORKS',5]]],
+    ['EXPOSED PIPES', [['OPEN PIPING',70],['J.B CLEANING & PIPE CHECKING',30]]],
+    ['FLOOR PIPING', [['GF,1F,2F',70],['ROOF EL J.B FIXING',10],['ROOF WALL CUTTING & PIPING',20]]],
+    ['WIRING', [['DATA WIRING',10],['LIGHT WIRING',65],['POWER WIRING',25]]],
+    ['LV CABLES', [['ARMOUR CABLE PULLING',100]]]
+  ],
+  PL: [
+    ['UNDERGROUND', [['TIE BEAM SLEEVES',15],['UPVC PIPING',70],['PPR PIPING',5],['GRAVITY TEST',5],['PPR PRESSURE TEST',5]]],
+    ['EXTERNAL WORKS', [['WATER TANK CONNECTION',50],['B. PUMP INSTALLATION',50]]],
+    ['GF SLAB WORKS', [['SLAB MARKING',10],['SLEEVE INSTALLATION',80],['BALCONY PIPING',5],['RAINWATER RISER',5]]],
+    ['1F SLAB WORKS', [['SLAB MARKING',10],['SLEEVE INSTALLATION',80],['BALCONY PIPING',5],['RAINWATER RISER',5]]],
+    ['2F SLAB WORKS', [['SLAB MARKING',10],['SLEEVE INSTALLATION',80],['BALCONY PIPING',5],['RAINWATER RISER',5]]],
+    ['1ST FIX WORKS', [['DRAINAGE 1ST FIX',30],['PEX 1ST FIX',70]]],
+    ['DR & PPR RISER', [['PPR RISER PIPING',25],['PPR PRESSURE TEST',5],['DR RISER PIPING',65],['DR RISER GRAVITY TEST',5]]],
+    ['DR H/L', [['DR H/L PIPE',87],['DR INSULATION',10],['DR ROOF',3]]],
+    ['PPR H/L & ROOF', [['PPR H/L',70],['PPR INSULATION',15],['PPR ROOF',15]]],
+    ['T&C', [['PPR T&C',50],['DR T&C',50]]]
+  ],
+  HV: [
+    ['DUCT WORKS AT SHAFTS - GF,1F,2F', EQ(['DUCT RISER','COPPER RISER','ROOF ELBOW WORKS'])],
+    ['DUCT WORKS AT ROOF', [['ROOF ELBOW WORKS',100]]],
+    ['AC & VENTILATION DUCT WORKS', EQ(['DUCT & FCU SUPPORT WORKS','H/L DUCT INSTALLATION','FCU INSTALLATION','OUTDOOR INSTALLATION','FAN INSTALLATION'])],
+    ['T&C', [['T&C',100]]]
+  ]
+};
+function buildAct(seed){
+  const out = {};
+  Object.entries(seed).forEach(([k, mains]) => {
+    out[k] = mains.map(([mn, subs], mi) => ({id: k + 'm' + mi, name: mn,
+      subs: subs.map(([sn, w], si) => ({id: k + 'm' + mi + 's' + si, name: sn, w}))}));
+  });
+  return out;
+}
+/* Blocks read from the Taormina Village-01 map (villas per block, colour gives the type).
+   Each list adds up to the TH total already in the seed. Applied once, to THs that have no blocks yet. */
+const MIX_4_5 = {'4BR-LUX': 1, '5BR-LUX': 2};
+const BLOCK_SEED = {
+  tv1: {
+    'TH-R02': [['B1',{'3BR':14}],['B2',{'3BR':12}]],
+    'TH-R05': [['B1',{'3BR':14}],['B2',{'3BR':14}]],
+    'TH-R06': [['B1',{'3BR':14}],['B2',{'3BR':14}]],
+    'TH-R07': [['B1',MIX_4_5],['B2',MIX_4_5],['B3',MIX_4_5],['B4',MIX_4_5]],
+    'TH-R08': [['B1',MIX_4_5],['B2',MIX_4_5],['B3',MIX_4_5],['B4',MIX_4_5]],
+    'TH-R09': [['B1',MIX_4_5],['B2',MIX_4_5],['B3',{'5BR-LUX':2}],['B4',{'4BR-STANDALONE':1}]],
+    'TH-R17': [['B1',MIX_4_5],['B2',MIX_4_5],['B3',MIX_4_5],['B4',MIX_4_5],['B5',MIX_4_5],['B6',{'4BR-STANDALONE':1}]],
+    'TH-R15': [['B1',{'4BR':12}],['B2',{'4BR':14}]],
+    'TH-R25': [['B1',{'4BR':12}],['B2',{'4BR':14}]],
+    'TH-R31': [['B1',{'3BR':14}],['B2',{'3BR':12}]],
+    'TH-R32': [['B1',{'4BR':10}],['B2',{'4BR':14}]],
+    'TH-R33': [['B1',{'4BR':10}],['B2',{'3BR':12}]]
+  }
+};
+// force: names of THs whose blocks are replaced even if they already have blocks.
+function applyBlockSeed(st, force){
+  (st.projects || []).forEach(p => {
+    const map = BLOCK_SEED[p.id]; if (!map) return;
+    (p.ths || []).forEach(t => {
+      const list = map[t.th];
+      if (!list) return;
+      if ((t.blocks || []).length && !(force || []).includes(t.th)) return;
+      t.blocks = list.map(([name, mix]) => ({name, v: {...mix}}));
+      syncTh(t);
+    });
+  });
+}
+function seedState(){
+  const st = {
+    seedVer: 13,
+    access: {adminHash: null, users: []},
+    projects: JSON.parse(JSON.stringify(SEED_PROJECTS)),
+    act: buildAct(ACT_SEED),
+    subs: SEED_SUBS.map(([id, name, discs]) => ({id, name, discs: [...discs]})),
+    labsup: [],
+    reports: {},
+    prog: {}
+  };
+  applyBlockSeed(st, []);
+  st.projects.forEach(ensureTypes);
+  return st;
+}
+
+/* ============ State ============ */
+let S = load();
+let lastSnap = JSON.stringify(S);
+let ui = {view:'projects', pid:null, disc:'EL', date:todayIso(), editId:null, editMode:false, actDisc:'EL', subAddDisc:'EL', showLog:false};
+
+// Version 1.27: labour supplier totals typed in the TOTAL row move onto the first activity line of that discipline and day.
+function migrateSupLines(s){
+  Object.values(s.reports || {}).forEach(days => Object.values(days || {}).forEach(day => {
+    DISCS.forEach(D => {
+      const dd = day[D.k]; if (!dd || !(dd.lsup || []).length) return;
+      const first = (dd.rows || [])[0];
+      dd.lsup.forEach(sp => {
+        const l = sp.lab || {};
+        if (first && (+l.st || +l.sh)) { first.sup = first.sup || {}; first.sup[sp.id] = {st: +l.st || 0, sh: +l.sh || 0}; }
+        delete sp.lab;
+      });
+    });
+  }));
+}
+// Version 1.20: labour supplier counts typed on activity lines move to one row per discipline and day.
+function migrateLabSup(s){
+  Object.values(s.reports || {}).forEach(days => Object.values(days || {}).forEach(day => {
+    DISCS.forEach(D => {
+      const dd = day[D.k]; if (!dd) return;
+      dd.lsup = dd.lsup || [];
+      let st = 0, sh = 0;
+      (dd.rows || []).forEach(r => { const l = r.lab || {}; st += +l.st || 0; sh += +l.sh || 0; delete l.st; delete l.sh; });
+      if (st || sh) dd.lsup.push({id: 'ls' + Math.random().toString(36).slice(2, 9), sid: null, name: 'Earlier entries (no supplier)', lab: {st, sh}, rem: ''});
+    });
+  }));
+}
+function migrateColumnWorks(s){
+  const m = ((s.act && s.act.EL) || []).find(x => x.name === '1ST FIX WORKS');
+  if (!m || m.subs.some(x => x.name === 'COLUMN WORKS')) return;
+  const bb = m.subs.find(x => x.name === 'BACKBOX & PIPING');
+  if (bb && +bb.w === 90) bb.w = 85;
+  m.subs.push({id: m.id + 's' + Math.random().toString(36).slice(2, 9), name: 'COLUMN WORKS', w: 5});
+}
+function migrateSlabFloors(s){
+  ['EL', 'PL'].forEach(k => {
+    const list = (s.act && s.act[k]) || [];
+    const i = list.findIndex(m => m.name === 'SLAB WORKS');
+    if (i < 0 || list.some(m => m.name === '1F SLAB WORKS')) return;
+    const src = list[i];
+    src.name = 'GF SLAB WORKS';
+    const copies = ['1F SLAB WORKS', '2F SLAB WORKS'].map(name => {
+      const id = k + 'x' + Math.random().toString(36).slice(2, 8);
+      return {id, name, subs: src.subs.map(x => ({id: id + 's' + Math.random().toString(36).slice(2, 8), name: x.name, w: x.w}))};
+    });
+    list.splice(i + 1, 0, ...copies);
+  });
+}
+// Progress by activity: S.prog[projectId][disc][TH][block or ''][subId] = % done (0 to 100).
+// The daily report and the Progress section both write here; the latest value wins.
+function progStore(st, pid, k, th, blk, sid, v){
+  if (!th || !sid) return;
+  const pr = st[pid] = st[pid] || {}, dk = pr[k] = pr[k] || {}, tt = dk[th] = dk[th] || {}, bb = tt[blk] = tt[blk] || {};
+  if (v == null) delete bb[sid]; else bb[sid] = v;
+}
+function migrateProgress(s){
+  s.prog = s.prog || {};
+  Object.entries(s.reports || {}).forEach(([pid, days]) => {
+    Object.keys(days || {}).sort().forEach(date => {
+      ['EL', 'PL', 'HV'].forEach(k => ((((days[date] || {})[k]) || {}).rows || []).forEach(r => {
+        if (r.th && r.sid && r.pct !== null && r.pct !== undefined && r.pct !== '' && isFinite(+r.pct)) progStore(s.prog, pid, k, r.th, r.block || '', r.sid, +r.pct);
+      }));
+    });
+  });
+}
+function load(){
+  try {
+    const s = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (s && Array.isArray(s.projects) && s.act && s.subs && s.reports) {
+      if (!(s.seedVer >= 2)) {
+        // add projects that were introduced after this data was saved
+        SEED_PROJECTS.forEach(sp => { if (!s.projects.some(p => p.id === sp.id)) s.projects.push(JSON.parse(JSON.stringify(sp))); });
+        s.seedVer = 2;
+      }
+      // version 1.2: access settings (admin password hash and users)
+      if (!s.access || !Array.isArray(s.access.users)) s.access = {adminHash: s.access && s.access.adminHash || null, users: []};
+      if (!(s.seedVer >= 3)) s.seedVer = 3;
+      // version 1.6: block split of the Taormina map, once
+      if (!(s.seedVer >= 4)) { applyBlockSeed(s, []); s.seedVer = 4; }
+      // version 1.7: blocks hold a mix of villa types; TH-R07 and TH-R08 get the 4BR-LUX + 5BR-LUX split per block
+      if (!(s.seedVer >= 5)) {
+        (s.projects || []).forEach(p => (p.ths || []).forEach(t => { if ((t.blocks || []).length) syncTh(t); }));
+        applyBlockSeed(s, ['TH-R07', 'TH-R08']);
+        s.seedVer = 5;
+      }
+      // version 1.8: TH-R09 blocks (B1 and B2 as TH-R08, B3 two 5BR-LUX, B4 one 4BR-STANDALONE)
+      if (!(s.seedVer >= 6)) { applyBlockSeed(s, ['TH-R09']); s.seedVer = 6; }
+      // version 1.9: TH-R17 blocks (B1 to B5 as TH-R08, B6 one 4BR-STANDALONE)
+      if (!(s.seedVer >= 7)) { applyBlockSeed(s, ['TH-R17']); s.seedVer = 7; }
+      // version 1.10: each project has its own villa types and colours
+      if (!(s.seedVer >= 8)) { (s.projects || []).forEach(ensureTypes); s.seedVer = 8; }
+      // version 1.20: labour supplier database; labour supplier counts move from activity lines to a per-day list
+      if (!(s.seedVer >= 9)) { s.labsup = s.labsup || []; migrateLabSup(s); s.seedVer = 9; }
+      if (!(s.seedVer >= 10)) { migrateSupLines(s); s.seedVer = 10; }
+      // version 1.32: Electrical 1ST FIX WORKS gets COLUMN WORKS (5%), taken from BACKBOX & PIPING, once
+      if (!(s.seedVer >= 11)) { migrateColumnWorks(s); s.seedVer = 11; }
+      // version 1.37: SLAB WORKS (Electrical and Plumbing) becomes GF, 1F and 2F SLAB WORKS with the same sub activities, once.
+      // Existing entries stay under GF SLAB WORKS.
+      if (!(s.seedVer >= 12)) { migrateSlabFloors(s); s.seedVer = 12; }
+      // version 1.40: progress by activity, filled from the saved daily reports (latest % wins), once
+      if (!(s.seedVer >= 13)) { migrateProgress(s); s.seedVer = 13; }
+      return s;
+    }
+  } catch (e) {}
+  return seedState();
+}
+/* Undo and redo: every saved change is a step. Snapshots are whole-app states (before each change). */
+const HIST_MAX = 30;
+let undoStack = [], redoStack = [];
+function save(){
+  const cur = JSON.stringify(S);
+  try { localStorage.setItem(KEY, cur); }
+  catch (e) { toast('Storage is full. Remove a map image, or make a backup now.', true); return false; }
+  if (cur !== lastSnap) {
+    undoStack.push(lastSnap);
+    if (undoStack.length > HIST_MAX) undoStack.shift();
+    redoStack = [];
+    lastSnap = cur;
+  }
+  updateHistBtns();
+  return true;
+}
+function updateHistBtns(){
+  const u = $('#btnUndo'), r = $('#btnRedo');
+  if (u) u.disabled = !undoStack.length;
+  if (r) r.disabled = !redoStack.length;
+}
+function applySnap(snap){
+  S = JSON.parse(snap); lastSnap = snap;
+  try { localStorage.setItem(KEY, snap); } catch (e) {}
+  render(); updateHistBtns();
+}
+function undo(){
+  if (!undoStack.length) { toast('Nothing to undo'); return; }
+  redoStack.push(lastSnap); applySnap(undoStack.pop()); toast('Undone');
+}
+function redo(){
+  if (!redoStack.length) { toast('Nothing to redo'); return; }
+  undoStack.push(lastSnap); applySnap(redoStack.pop()); toast('Redone');
+}
+
+/* ============ Access control (runs in the browser; see the note on the Admin page) ============ */
+let SESSION = readSession();
+function readSession(){ try { return JSON.parse(sessionStorage.getItem('mdrSession') || 'null'); } catch (e) { return null; } }
+function writeSession(s){ SESSION = s; try { if (s) sessionStorage.setItem('mdrSession', JSON.stringify(s)); else sessionStorage.removeItem('mdrSession'); } catch (e) {} }
+const gateOn = () => !!(S.access && S.access.adminHash);
+const userByEmail = em => (S.access.users || []).find(u => u.email === em);
+function isAdmin(){ return !gateOn() || (!!SESSION && SESSION.role === 'admin'); }
+function currentUser(){ return SESSION && SESSION.role === 'user' ? userByEmail(SESSION.email) : null; }
+function canProj(id){ if (isAdmin()) return true; const u = currentUser(); return !!u && u.projects.includes(id); }
+function needsLogin(){ return gateOn() && !isAdmin() && !currentUser(); }
+function visibleProjects(){ return S.projects.filter(p => canProj(p.id)); }
+// Options inside a project. A user without a saved list for a project gets all three.
+const SECS = ['report'];
+const SEC_SHORT = {report: 'Daily report', map: 'Site map', summary: 'Summary & BOQ', ipt: 'MEP IPT Progress'};
+function secList(u, pid){ return (u && u.secs && Array.isArray(u.secs[pid])) ? u.secs[pid] : SECS; }
+function allowedSecs(pid){
+  if (isAdmin()) return SECS;
+  const u = currentUser();
+  return u && u.projects.includes(pid) ? SECS.filter(s => secList(u, pid).includes(s)) : [];
+}
+const toHex = buf => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+async function hashPw(pw, salt){ return toHex(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(salt + ':' + pw))); }
+async function setAdminPw(pw){
+  const salt = toHex(crypto.getRandomValues(new Uint8Array(12)));
+  const h = await hashPw(pw, salt);
+  S.access.adminHash = salt + ':' + h;
+}
+async function checkAdminPw(pw){
+  if (!gateOn()) return false;
+  const [salt, h] = S.access.adminHash.split(':');
+  return (await hashPw(pw, salt)) === h;
+}
+
+/* ============ Helpers ============ */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num = v => { const n = parseFloat(v); return isFinite(n) ? n : 0; };
+const isNum = v => v !== null && v !== undefined && v !== '' && isFinite(+v);
+const uid = () => Math.random().toString(36).slice(2, 9);
+function todayIso(){ return new Date().toLocaleDateString('en-CA'); }
+function fmtIso(iso){ const [y, m, d] = String(iso).split('-'); return `${d}-${m}-${y}`; }
+function fmtLong(iso){ return new Date(iso + 'T00:00:00').toLocaleDateString('en-GB', {weekday:'long', day:'2-digit', month:'short', year:'numeric'}); }
+const vt = th => Object.values(th.v || {}).reduce((a, b) => a + (+b || 0), 0);
+const ptot = p => p.ths.reduce((a, t) => a + vt(t), 0);
+const ptypes = p => Object.fromEntries(PT(p).map(([k]) => [k, p.ths.reduce((a, t) => a + (+t.v[k] || 0), 0)]));
+const proj = id => S.projects.find(p => p.id === id);
+const curProj = () => proj(ui.pid);
+const pctTxt = f => (f * 100).toFixed(1) + '%';
+const wTxt = w => (+(+w).toFixed(2)) + '%';
+const scopeKey = r => (r.th || '') + '|' + (r.block || '');
+function toast(msg, err){
+  const t = $('#toast'); t.textContent = msg; t.className = 'toast' + (err ? ' err' : ''); t.hidden = false;
+  clearTimeout(toast._t); toast._t = setTimeout(() => { t.hidden = true; }, 2600);
+}
+function armed(b, label, fn){
+  if (!b.dataset.armed) {
+    b.dataset.armed = '1'; const was = b.textContent; b.textContent = 'Sure?';
+    setTimeout(() => { if (b.isConnected) { b.removeAttribute('data-armed'); b.textContent = was; } }, 3000);
+    return false;
+  }
+  return true;
+}
+
+/* ============ Activity lookups ============ */
+function findMain(k, mid){ return (S.act[k] || []).find(m => m.id === mid); }
+// Numbering: main activity 1, 2, 3 and sub activity 1.1, 1.2 within it (order of the Activity database).
+function actNo(k, mid, sid){
+  const mi = (S.act[k] || []).findIndex(m => m.id === mid);
+  if (mi < 0) return '';
+  if (!sid) return String(mi + 1);
+  const si = S.act[k][mi].subs.findIndex(s => s.id === sid);
+  return si < 0 ? '' : (mi + 1) + '.' + (si + 1);
+}
+function findSub(k, sid){
+  for (const m of (S.act[k] || [])) { const s = m.subs.find(x => x.id === sid); if (s) return {m, s}; }
+  return null;
+}
+function subW(k, sid){ const f = findSub(k, sid); return f ? (+f.s.w || 0) : 0; }
+
+/* ============ Daily report data ============ */
+function newRow(mid, sid, mname, sname){
+  return {id:'r' + uid(), mid, sid, mname, sname, th:'', block:'', pct:null, rem:'', lab:{}};
+}
+// Keep one row per sub activity in database order; extra TH rows stay together; removed items stay visible.
+function syncRows(d, k){
+  const old = d[k].rows || [], out = [], seen = new Set();
+  (S.act[k] || []).forEach(m => m.subs.forEach(s => {
+    const mine = old.filter(r => r.sid === s.id);
+    const list = mine.length ? mine : [newRow(m.id, s.id, m.name, s.name)];
+    list.forEach(r => { r.mid = m.id; r.sid = s.id; r.mname = m.name; r.sname = s.name; out.push(r); seen.add(r.id); });
+  }));
+  old.forEach(r => { if (!seen.has(r.id)) out.push(r); });
+  d[k].rows = out;
+}
+function dayOf(pid, date){
+  S.reports[pid] = S.reports[pid] || {};
+  const days = S.reports[pid];
+  if (!days[date]) days[date] = {hours:'', subs:[], EL:{by:'', rows:[]}, PL:{by:'', rows:[]}, HV:{by:'', rows:[]}};
+  const d = days[date];
+  d.subs = d.subs || [];
+  DISCS.forEach(D => { d[D.k] = d[D.k] || {by:'', rows:[]}; d[D.k].lsup = d[D.k].lsup || []; syncRows(d, D.k); });
+  return d;
+}
+function curDay(){ return dayOf(ui.pid, ui.date); }
+
+// Weighted % of each main activity per TH/block scope: sum of (weightage x % sub done).
+function mainPcts(rows, k){
+  const m = new Map();
+  rows.forEach(r => {
+    if (!r.th || !isNum(r.pct)) return;
+    const key = r.mid + '|' + scopeKey(r);
+    m.set(key, (m.get(key) || 0) + (subW(k, r.sid) / 100) * (r.pct / 100));
+  });
+  return m;
+}
+// Groups of rows by main activity, each row with its view values.
+function discGroups(d, k){
+  const mp = mainPcts(d[k].rows, k);
+  const groups = [], byId = new Map();
+  d[k].rows.forEach(r => {
+    let g = byId.get(r.mid);
+    if (!g) {
+      const m = findMain(k, r.mid);
+      g = {mid: r.mid, name: m ? m.name : (r.mname || '(removed)'), orphan: !m, rows: []};
+      byId.set(r.mid, g); groups.push(g);
+    }
+    g.rows.push(r);
+  });
+  return groups.map(g => {
+    const last = {};
+    g.rows.forEach((r, i) => { if (r.th) last[scopeKey(r)] = i; });
+    return {...g, rows: g.rows.map((r, i) => {
+      const f = findSub(k, r.sid);
+      const sc = scopeKey(r);
+      const showMain = r.th && last[sc] === i;
+      return {r, subName: f ? f.s.name : (r.sname || '(removed)'), w: f ? +f.s.w : 0, scope: sc, showMain: !!showMain,
+        mainPct: showMain && mp.has(g.mid + '|' + sc) ? mp.get(g.mid + '|' + sc) : null,
+        orphan: !f};
+    })};
+  });
+}
+function labSum(d, k){
+  const t = Object.fromEntries(LAB.map(x => [x, 0]));
+  d[k].rows.forEach(r => LAB_MGC.forEach(x => { t[x] += +(r.lab || {})[x] || 0; }));
+  Object.values(supTotals(d, k)).forEach(v => LAB_SUP.forEach(x => { t[x] += v[x]; }));
+  return t;
+}
+// Totals per labour supplier added to a discipline: the sum of that supplier's counts on each activity line.
+function supTotals(d, k){
+  const ids = (d[k].lsup || []).map(x => x.id), out = {};
+  ids.forEach(id => { out[id] = {st: 0, sh: 0}; });
+  d[k].rows.forEach(r => ids.forEach(id => { const v = (r.sup || {})[id] || {}; LAB_SUP.forEach(x => { out[id][x] += +v[x] || 0; }); }));
+  return out;
+}
+function filledCount(d, k){ return d[k].rows.filter(r => r.th && isNum(r.pct)).length; }
+
+/* ============ Views: router ============ */
+function go(view, extra){
+  ui.view = view;
+  if (extra) Object.assign(ui, extra);
+  render();
+  window.scrollTo(0, 0);
+}
+function render(){
+  const adm = isAdmin();
+  updateHistBtns();
+  if (SESSION && SESSION.role === 'user' && !userByEmail(SESSION.email)) writeSession(null);
+  if (needsLogin()) ui.view = 'login';
+  if (ui.view === 'admin' && !adm) ui.view = 'login';
+  if ((ui.view === 'activity' || ui.view === 'subdb' || ui.view === 'labdb') && !adm) ui.view = 'projects';
+  if (ui.view === 'project' && !canProj(ui.pid)) ui.view = 'projects';
+  document.querySelectorAll('.view').forEach(v => { v.hidden = true; });
+  $('#v-' + ui.view).hidden = false;
+  $('#sessInfo').hidden = !(gateOn() && SESSION);
+  $('#sessWho').textContent = SESSION && SESSION.role === 'user' ? SESSION.email : 'Admin';
+  const p = ui.view === 'project' ? curProj() : null;
+  const titles = {
+    projects: ['Daily Manpower Report', ''],
+    project: [p ? p.name : 'Project', 'Daily report by discipline, with TH, block and labour.'],
+    activity: ['Activity Database', 'Main activity, sub activity and weightage per discipline. Common to all projects.'],
+    subdb: ['Sub Contractor Database', 'Subcontractors by discipline. Added to the sub contractor sheet of each daily report.'],
+    labdb: ['Labour Supplier Database', 'Labour suppliers by discipline. Added to the labour supplier section of each daily report.'],
+    login: ['Sign in', 'Enter your email to open the projects you have been given.'],
+    admin: ['Admin', 'Who can sign in, and which projects each user can open.']
+  };
+  $('#pageTitle').textContent = titles[ui.view][0];
+  $('#pageSub').textContent = titles[ui.view][1];
+  $('#pageSub').hidden = !titles[ui.view][1];
+  $('#verNo').textContent = APP_VERSION;
+  renderLog();
+  if (ui.view === 'projects') renderProjects();
+  if (ui.view === 'project') { if (p) renderProject(); else go('projects'); }
+  if (ui.view === 'activity') renderActivity();
+  if (ui.view === 'subdb') renderSubDb();
+  if (ui.view === 'labdb') renderLabDb();
+  if (ui.view === 'login') renderLogin();
+  if (ui.view === 'admin') renderAdmin();
+}
+function renderLogin(){
+  $('#v-login').innerHTML = `<div class="login-card">
+    <h2>Sign in</h2>
+    <p class="hint">Enter the email your administrator added. You will see only the projects assigned to you.</p>
+    <label class="fl">Email<input class="inp" id="loginEmail" type="email" autocomplete="username" placeholder="name@company.com"></label>
+    <div class="addrow"><button class="btn p" id="loginBtn">Sign in</button></div>
+    <details style="margin-top:14px"><summary class="muted">Admin sign-in</summary>
+      <label class="fl" style="margin-top:8px">Admin password<input class="inp" id="loginPw" type="password" autocomplete="current-password"></label>
+      <div class="addrow"><button class="btn" id="loginAdminBtn">Sign in as admin</button></div>
+    </details>
+    <p class="hint" style="margin-top:12px">Access control runs in this browser only. See the note on the Admin page.</p></div>`;
+}
+function renderAdmin(){
+  const on = gateOn(), users = (S.access && S.access.users) || [];
+  const head = `<tr><th class="l">Email</th>${S.projects.map(p => `<th>${esc(p.name)}</th>`).join('')}<th></th></tr>`;
+  const rows = users.map(u => `<tr><td class="l"><b>${esc(u.email)}</b></td>${S.projects.map(p => {
+    const on = u.projects.includes(p.id), list = secList(u, p.id);
+    return `<td><label class="secp"><input type="checkbox" data-acc="proj" data-em="${esc(u.email)}" data-pid="${esc(p.id)}" ${on ? 'checked' : ''}> Access</label>
+      <div class="secs">${SECS.map(sc => `<label><input type="checkbox" data-acc="sec" data-sec="${sc}" data-em="${esc(u.email)}" data-pid="${esc(p.id)}" ${list.includes(sc) ? 'checked' : ''} ${on ? '' : 'disabled'}>${SEC_SHORT[sc]}</label>`).join('')}</div></td>`;
+  }).join('')}<td><button class="x" data-acc="deluser" data-em="${esc(u.email)}" title="Remove user">×</button></td></tr>`).join('');
+  $('#v-admin').innerHTML = `
+    <div class="adm-sec"><h3>Admin password</h3>
+      <p class="hint">${on ? 'Access control is on. Change the admin password here.' : 'Access control is off, so everyone has full access. Set an admin password to turn it on. Then users must sign in with their email.'}</p>
+      <div class="addrow"><input class="inp" id="admPw1" type="password" placeholder="${on ? 'New admin password' : 'Admin password (min 6 characters)'}" autocomplete="new-password"><input class="inp" id="admPw2" type="password" placeholder="Repeat password" autocomplete="new-password"><button class="btn p" data-acc="setpw">${on ? 'Change password' : 'Turn on access control'}</button></div>
+      ${on ? `<div class="addrow"><button class="btn danger" data-acc="offbtn">Turn off access control</button><span class="hint">Removes the admin password and all users. Everyone then has full access.</span></div>` : ''}
+    </div>
+    ${on ? `<div class="adm-sec"><h3>Users and their projects</h3>
+      <div class="addrow"><input class="inp" id="newEmail" type="email" placeholder="Email of the user" autocomplete="off"><button class="btn p" data-acc="adduser">+ Add user</button></div>
+      <div class="tbl" style="margin-top:12px">${S.projects.length && users.length ? `<table class="acc-table"><thead>${head}</thead><tbody>${rows}</tbody></table>` : '<div class="empty">No users yet, or no projects. Add a user, then tick the projects they can open.</div>'}</div>
+      <p class="hint" style="margin-top:10px">Tick a project, then tick the options the user can open in it: Daily report (Daily Manpower Report), Site map (Site Progress Map) and Summary &amp; BOQ (Summary, Overtime &amp; BOQ) and MEP IPT Progress. A user with only one option goes straight to it.</p>
+      <p class="hint">Users see only the projects ticked here. They can enter daily reports, but cannot change project details, add or delete projects, back up or restore, or open the Activity and Sub contractor databases.</p>
+      <p class="hint">Note: this gate runs in the browser. Anyone who can open the file can read or change the data, so it keeps honest users out of projects but is not secure. For real protection, the data must be held on a server with its own sign-in.</p>
+    </div>` : ''}`;
+}
+function renderLog(){
+  const el = $('#clPanel');
+  el.hidden = !ui.showLog;
+  if (!ui.showLog) return;
+  el.innerHTML = '<div class="cl-panel"><h3>Change log</h3>' + CHANGELOG.map(c =>
+    `<div><b>Version ${esc(c.v)}</b> · <span class="muted">${esc(c.d)}</span><ul>${c.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul></div>`).join('') + '</div>';
+}
+
+/* ============ PROJECTS (screenshot window) ============ */
+function renderProjects(){
+  const ed = ui.editId ? proj(ui.editId) : null, adm = isAdmin(), list = visibleProjects();
+  const empty = adm ? 'No projects yet. Click "+ Add project" to start.' : 'No projects have been assigned to you yet. Ask the admin.';
+  $('#v-projects').innerHTML = `
+    <h2 class="ptitle">PROJECTS</h2>
+    ${adm ? `<div class="pactions">
+      <button class="btn" data-p="add">+ Add project</button>
+      <button class="btn" data-p="backup">Back up all projects</button>
+      <label class="btn" style="cursor:pointer">Restore from backup<input type="file" id="restoreFile" accept="application/json" hidden></label>
+    </div>` : ''}
+    <div class="prj-grid">${list.length ? list.map(card).join('') : `<div class="empty">${empty}</div>`}</div>
+    ${ed && adm ? editorHtml(ed) : ''}`;
+}
+function card(p){
+  PALP = p;
+  const n = ptot(p), ty = ptypes(p);
+  const cover = p.maps && p.maps[0];
+  const strip = p.ths.length ? p.ths.map(t => {
+    const dom = Object.entries(t.v).sort((a, b) => b[1] - a[1])[0];
+    return `<i title="${esc(t.th)} · ${vt(t)}" style="flex:${vt(t) || 1} 1 0;background:${dom ? COL(dom[0]) : '#cbd5e1'}"></i>`;
+  }).join('') : '';
+  const chips = PT(PALP).filter(([k]) => ty[k]).map(([k]) => `<span class="tchip" style="--c:${COL(k)}">${k} · ${ty[k]}</span>`).join('');
+  return `<article class="prj-card ${ui.editId === p.id ? 'on' : ''}">
+    <div class="thumb">${cover ? `<img src="${esc(cover.data)}" alt="${esc(p.name)} map">` : (strip ? `<div class="strip">${strip}</div>` : '<em>No map uploaded yet</em>')}</div>
+    <h3>${esc(p.name.toUpperCase())}</h3>
+    <div class="meta">${p.ths.length} TH · ${n} villas${p.kind ? ' · ' + esc(p.kind) : ''}</div>
+    <div class="chips">${chips}</div>
+    <div class="owner">${esc(p.owner || 'Owner not set')}</div>
+    <div class="acts"><button class="btn p" data-p="open" data-id="${p.id}">Open project</button>${isAdmin() ? `<button class="btn" data-p="edit" data-id="${p.id}">Edit details &amp; TH</button>` : ''}</div>
+  </article>`;
+}
+function editorHtml(p){
+  PALP = p;
+  const ty = ptypes(p), edit = ui.editMode;
+  const head = `<div class="ed-head">
+    <div><div class="ed-kicker">${p.ths.length} TH · ${ptot(p)} VILLAS</div><h3>${esc(p.name)}</h3></div>
+    <div class="ed-btns"><button class="btn ${edit ? 'p' : ''}" data-p="toggle">${edit ? 'Done editing' : 'Edit'}</button><button class="btn ghost" data-p="close">Close</button></div></div>`;
+  const details = edit ? `<div class="ed-grid">
+      ${fieldHtml(p, 'name', 'Project name')}${fieldHtml(p, 'kind', 'Project type')}
+      ${fieldHtml(p, 'owner', 'Owner')}${fieldHtml(p, 'consultant', 'Consultant')}
+      ${fieldHtml(p, 'contractor', 'Main contractor')}${fieldHtml(p, 'asof', 'Status as of', 'date')}
+    </div>`
+    : `<div class="ptinfo"><span>${esc(p.kind || '—')}</span><span>Owner: ${esc(p.owner || '—')}</span><span>Consultant: ${esc(p.consultant || '—')}</span><span>Contractor: ${esc(p.contractor || '—')}</span><span>As of ${esc(p.asof || '—')}</span></div>`;
+  const mapsHtml = edit
+    ? `<div class="maps">${(p.maps || []).map((m, i) => `<div class="mapitem"><img src="${esc(m.data)}" alt=""><div class="mrow"><span title="${esc(m.name)}">${i === 0 ? '★ ' : ''}${esc(m.name)}</span><span>${i === 0 ? '' : `<button class="x plus" data-p="cover" data-mi="${i}">Make cover</button>`}<button class="x" data-p="delmap" data-mi="${i}">×</button></span></div></div>`).join('')}</div>
+       <div class="dropline"><input class="inp" type="file" accept="image/*,application/pdf" multiple data-map-input="1"> <span class="hint">Upload the project map (JPG, PNG or PDF; each PDF page becomes a map, up to 10 pages). The first map is the cover shown on the project card. Images are resized automatically.</span></div>`
+    : `<div class="maps">${(p.maps || []).map(m => `<div class="mapitem"><img src="${esc(m.data)}" alt=""><div class="mrow"><span>${esc(m.name)}</span></div></div>`).join('') || '<span class="muted">No map uploaded yet. Click Edit to upload.</span>'}</div>`;
+  const thList = p.ths.map((t, i) => edit ? thEdit(t, i) : thView(t)).join('');
+  const totals = PT(PALP).filter(([k]) => ty[k]).map(([k]) => `<span class="tbtn" style="--c:${COL(k)}">${k}<b>${ty[k]}</b></span>`).join('');
+  const danger = edit ? `<div class="ed-danger">
+      <div><b>Delete this project</b><span>Type <b>${esc(p.name)}</b> exactly to enable delete.</span></div>
+      <div class="ed-danger-row"><input class="inp" id="pdelName" placeholder="Type project name" autocomplete="off"><button class="btn danger" id="pdelBtn" data-p="del" data-id="${p.id}" disabled>Delete project</button></div></div>` : '';
+  return `<div class="ed-card">${head}${details}
+    <div class="ed-sub">Project maps</div>${mapsHtml}
+    <div class="ed-sub">Villa types and colours</div>${legendHtml(p, edit)}
+    <div class="ed-sub">Townhouses, villa types and blocks</div>
+    <div class="th-list${edit ? ' edit' : ''}">${thList || '<div class="empty">No TH yet. Click Edit, then + Add TH.</div>'}</div>
+    <div class="ptotals">${totals}<span class="tbtn all">Total villas<b>${ptot(p)}</b></span></div>
+    ${edit ? `<div class="ed-actions"><button class="btn" data-p="addth">+ Add TH</button><span class="hint">Changes save automatically.</span></div>` : ''}
+    ${danger}</div>`;
+}
+function fieldHtml(p, key, label, type){
+  return `<label class="fl">${label}<input class="inp" type="${type || 'text'}" data-pf="${key}" value="${esc(p[key] || '')}"></label>`;
+}
+function thView(t){
+  const chips = PT(PALP).filter(([k]) => t.v[k]).map(([k]) => `<span class="tchip" style="--c:${COL(k)}">${k} · ${t.v[k]}</span>`).join('');
+  const blocks = (t.blocks || []).length ? `<div class="th-chips" style="margin-top:6px">${t.blocks.map(b => `<span class="tchip" style="--c:#64748b">${esc(b.name)} · ${esc(mixText(b.v))} · ${bVill(b)}</span>`).join('')}</div>` : '';
+  return `<div class="th-card"><div class="th-top"><b>${esc(t.th)}</b><span class="th-tot">${vt(t)}</span></div>
+    <div class="th-chips">${chips || '<span class="muted">No villas</span>'}</div>${blocks}</div>`;
+}
+function thEdit(t, i){
+  const blocks = t.blocks || [];
+  const bsum = blocks.reduce((a, b) => a + bVill(b), 0);
+  const bnote = blocks.length
+    ? `<span class="hint">${blocks.length} block${blocks.length > 1 ? 's' : ''}, ${bsum} villas. The TH total is the sum of the blocks.</span>`
+    : '<span class="hint">No blocks: enter villa types above. Add blocks if the TH is split into blocks with villas in each.</span>';
+  const grid = blocks.length ? '<div class="hint">Villa types and counts come from the blocks below.</div>'
+    : `<div class="th-grid">${PT(PALP).map(([k, c]) => `<label class="tin" style="--c:${c}"><span>${k}</span><input type="number" min="0" data-f="v" data-ti="${i}" data-k="${k}" value="${t.v[k] || ''}"></label>`).join('')}</div>`;
+  return `<div class="th-card edit">
+    <div class="th-top"><input class="cell th-name" data-f="th" data-ti="${i}" data-old="${esc(t.th)}" value="${esc(t.th)}"><span class="th-tot">${vt(t)}</span><button class="x" data-p="delth" data-ti="${i}" title="Remove TH">×</button></div>
+    ${grid}
+    <div class="blk-h"><span>Blocks</span><button class="x plus" data-p="addblock" data-ti="${i}">+ Block</button></div>
+    ${blocks.map((b, bi) => `<div class="blk mixed">
+      <div class="blk-row"><input class="nm" data-f="bn" data-ti="${i}" data-bi="${bi}" data-old="${esc(b.name)}" value="${esc(b.name)}" placeholder="Block name"><span class="th-tot">${bVill(b)}</span><button class="x" data-p="delblock" data-ti="${i}" data-bi="${bi}" title="Remove block">×</button></div>
+      <div class="mix">${PT(PALP).map(([k, c]) => `<label class="tin" style="--c:${c}"><span>${k}</span><input type="number" min="0" data-f="bm" data-ti="${i}" data-bi="${bi}" data-k="${k}" value="${(b.v || {})[k] || ''}"></label>`).join('')}</div>
+    </div>`).join('')}
+    <div style="margin-top:4px">${bnote}</div></div>`;
+}
+// Villa type that a TH's block gets by default: the TH's most common type.
+function dominantType(t){ const e = Object.entries(t.v || {}).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1])[0]; return e ? e[0] : '3BR'; }
+// A block holds a count of each villa type, e.g. {'4BR-LUX': 1, '5BR-LUX': 2}.
+// When a TH has blocks, its villa types and total are the sum of its blocks.
+function bVill(b){ return Object.values(b.v || {}).reduce((a, n) => a + (+n || 0), 0); }
+function mixText(m){ return Object.entries(m || {}).map(([k, n]) => `${n} × ${k}`).join(' + ') || 'no villas'; }
+function syncTh(t){
+  const blocks = t.blocks || [];
+  if (!blocks.length) return;
+  const dflt = dominantType(t), v = {};
+  blocks.forEach(b => {
+    if (!b.v) { // older block: one type and a villa count
+      b.v = (b.t && TC[b.t]) ? {[b.t]: +b.villas || 0} : {[dflt]: +b.villas || 0};
+      delete b.t; delete b.villas;
+    }
+    const clean = {};
+    Object.entries(b.v).forEach(([k, n]) => { if (typeof k === 'string' && k && +n > 0) clean[k] = Math.round(+n); });
+    b.v = clean;
+    Object.entries(clean).forEach(([k, n]) => { v[k] = (v[k] || 0) + n; });
+  });
+  t.v = v;
+}
+
+/* Map upload: resized, white background filled, saved as JPEG */
+function compressImage(file){
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      const max = 1600, s = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+      const w = Math.round(img.naturalWidth * s), h = Math.round(img.naturalHeight * s);
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      const x = c.getContext('2d'); x.fillStyle = '#ffffff'; x.fillRect(0, 0, w, h); x.drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg', 0.86));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('Could not read ' + file.name)); };
+    img.src = url;
+  });
+}
+// PDF reader (pdf.js) is loaded only when a PDF is chosen.
+const PDFJS_BASE = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+let pdfjsReady = null;
+function loadPdfjs(){
+  if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+  if (pdfjsReady) return pdfjsReady;
+  pdfjsReady = new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = PDFJS_BASE + 'pdf.min.js';
+    s.onload = () => { window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_BASE + 'pdf.worker.min.js'; res(window.pdfjsLib); };
+    s.onerror = () => { pdfjsReady = null; rej(new Error('Could not load the PDF reader. Check the internet connection and try again.')); };
+    document.head.appendChild(s);
+  });
+  return pdfjsReady;
+}
+// Each page (up to 10) becomes a JPEG map at up to 1600 px, with a pure white background.
+async function pdfToMaps(file){
+  const lib = await loadPdfjs();
+  const doc = await lib.getDocument({data: new Uint8Array(await file.arrayBuffer())}).promise;
+  const pages = Math.min(doc.numPages, 10), out = [];
+  for (let i = 1; i <= pages; i++) {
+    const page = await doc.getPage(i);
+    const base = page.getViewport({scale: 1});
+    const vp = page.getViewport({scale: Math.min(2, 1600 / Math.max(base.width, base.height))});
+    const c = document.createElement('canvas'); c.width = Math.round(vp.width); c.height = Math.round(vp.height);
+    const x = c.getContext('2d'); x.fillStyle = '#ffffff'; x.fillRect(0, 0, c.width, c.height);
+    await page.render({canvasContext: x, viewport: vp}).promise;
+    const im = x.getImageData(0, 0, c.width, c.height), d = im.data;
+    for (let k = 0; k < d.length; k += 4) { if (d[k] > 232 && d[k + 1] > 232 && d[k + 2] > 232) { d[k] = d[k + 1] = d[k + 2] = 255; } }
+    x.putImageData(im, 0, 0);
+    out.push({name: pages > 1 ? `${file.name} (page ${i})` : file.name, data: c.toDataURL('image/jpeg', 0.86)});
+  }
+  return out;
+}
+async function addMaps(p, files){
+  let n = 0;
+  for (const f of files) {
+    try {
+      p.maps = p.maps || [];
+      if (f.type === 'application/pdf' || /\.pdf$/i.test(f.name)) {
+        const list = await pdfToMaps(f); list.forEach(m => p.maps.push(m)); n += list.length;
+      } else {
+        p.maps.push({name: f.name, data: await compressImage(f)}); n++;
+      }
+    }
+    catch (e) { toast(e.message, true); }
+  }
+  if (n) { save(); renderProjects(); toast(n + ' map' + (n > 1 ? 's' : '') + ' added'); }
+}
+// Rename a TH (or block) in every saved report so existing rows keep their link.
+function renameTh(pid, oldN, newN){
+  Object.values(S.reports[pid] || {}).forEach(d => {
+    ['EL','PL','HV'].forEach(k => (d[k].rows || []).forEach(r => { if (r.th === oldN) r.th = newN; }));
+    (d.subs || []).forEach(s => { if (s.th === oldN) s.th = newN; });
+  });
+  const pr = (S.prog || {})[pid] || {};
+  ['EL','PL','HV'].forEach(k => { const dk = pr[k]; if (dk && dk[oldN] && oldN !== newN) { dk[newN] = dk[oldN]; delete dk[oldN]; } });
+}
+function renameBlock(pid, th, oldB, newB){
+  Object.values(S.reports[pid] || {}).forEach(d => {
+    ['EL','PL','HV'].forEach(k => (d[k].rows || []).forEach(r => { if (r.th === th && r.block === oldB) r.block = newB; }));
+    (d.subs || []).forEach(s => { if (s.th === th && s.block === oldB) s.block = newB; });
+  });
+  ['EL','PL','HV'].forEach(k => { const tt = (((S.prog || {})[pid] || {})[k] || {})[th]; if (tt && tt[oldB] !== undefined && oldB !== newB) { tt[newB] = tt[oldB]; delete tt[oldB]; } });
+}
+
+/* ============ Project daily report ============ */
+// Site progress maps, one per project (each map file is locked to its project). Stored as base64 of the original HTML.
+const PROGRESS_MAPS = {};
+const PM_IMPORT_VER = 'mpv-2026-11-14-1131';
+// Progress saved in MEP Progress Maps V1.2 (14 Nov 2026, 11:31). Each map takes it once, the first time it is opened in a browser.
+const PM_IMPORT = {"tv1": "eyJhcHAiOiJtZXAtcHJvZ3Jlc3MtbWFwcyIsInYiOjMsImFwcFZlcnNpb24iOiIxLjIiLCJzYXZlZCI6IjIwMjYtMTEtMTRUMTE6MzE6NTEuOTc3WiIsInByb2plY3RzIjpbeyJpZCI6InRhb3JtaW5hIiwiYnVpbHRpbiI6dHJ1ZSwibmFtZSI6IlRhb3JtaW5hIFZpbGxhZ2UgLSAwMSIsIm1ldGEiOnsiZGVzYyI6IlRhb3JtaW5hIFZpbGxhZ2UtMSwgVG93bmhvdXNlcyBDb21tdW5pdHkgKEcrMikiLCJvd25lciI6IlJlcG9ydGFnZSBQcmltZSBQcm9wZXJ0aWVzIiwiY29uc3VsdGFudCI6IiIsImNvbnRyYWN0b3IiOiJNb2R1biBHdWxmIEJ1aWxkaW5nIENvbnRyYWN0aW5nIEwuTC5DLiJ9LCJhY3RzIjpbeyJpZCI6ImEzIiwibmFtZSI6IldhdGVyIHRhbmsgaW5zdGFsbGF0aW9uIiwib24iOnRydWUsInN0Ijp7IlIxMCI6MiwiUjA5LUI0IjoyLCJSMDktQjMiOjIsIlIwOS1CMiI6MiwiUjA5LUIxIjoyLCJSMTgiOjIsIlIyMSI6MiwiUjE5IjoyLCJSMTctQjEiOjIsIlIxNy1CMiI6MiwiUjE3LUIzIjoyLCJSMTctQjQiOjIsIlIxNy1CNSI6MiwiUjE3LUI2IjoyLCJSMjIiOjIsIlIyMCI6MiwiUjExIjoyLCJSMjkiOjIsIlIwOC1CNCI6MiwiUjA4LUIzIjoyLCJSMDgtQjIiOjIsIlIwOC1CMSI6MiwiUjIzIjoyLCJSMTIiOjIsIlIyOCI6MiwiUjMyLUIxIjoyLCJSMzItQjIiOjIsIlIzMy1CMSI6MiwiUjMzLUIyIjoyLCJSMjQiOjIsIlIxMyI6MiwiUjI1LUIxIjoyLCJSMjUtQjIiOjIsIlIyNyI6MiwiUjE2IjoyLCJSMTUtQjEiOjIsIlIxNS1CMiI6MiwiUjI2IjoyLCJSMDctQjQiOjIsIlIwNy1CMyI6MiwiUjA3LUIyIjoyLCJSMDctQjEiOjIsIlIxNCI6MiwiUjA2LUIxIjoyLCJSMDYtQjIiOjIsIlIwNS1CMSI6MiwiUjA1LUIyIjoyLCJSMDQiOjIsIlIwMyI6MiwiUjAyLUIxIjoyLCJSMDItQjIiOjIsIlIwMSI6Mn19LHsiaWQiOiJhNCIsIm5hbWUiOiJXYXRlciB0YW5rIGNvbm5lY3Rpb24iLCJvbiI6dHJ1ZSwic3QiOnsiUjEwIjoyLCJSMDktQjQiOjIsIlIwOS1CMyI6MiwiUjA5LUIyIjoyLCJSMDktQjEiOjIsIlIxOCI6MiwiUjIxIjoyLCJSMTkiOjIsIlIxNy1CMSI6MiwiUjE3LUIyIjoyLCJSMTctQjMiOjIsIlIxNy1CNCI6MiwiUjE3LUI1IjoyLCJSMTctQjYiOjIsIlIyMiI6MiwiUjIwIjoyLCJSMTEiOjIsIlIyOSI6MiwiUjA4LUI0IjoyLCJSMDgtQjMiOjIsIlIwOC1CMiI6MiwiUjA4LUIxIjoyLCJSMjMiOjIsIlIxMiI6MiwiUjI4IjoyLCJSMzItQjEiOjIsIlIzMi1CMiI6MiwiUjMzLUIxIjoyLCJSMzMtQjIiOjIsIlIyNCI6MiwiUjEzIjoyLCJSMjUtQjEiOjIsIlIyNS1CMiI6MiwiUjI3IjoyLCJSMTYiOjIsIlIxNS1CMSI6MiwiUjE1LUIyIjoyLCJSMjYiOjIsIlIwNy1CNCI6MiwiUjA3LUIzIjoyLCJSMDctQjIiOjIsIlIwNy1CMSI6MiwiUjE0IjoyLCJSMDYtQjEiOjIsIlIwNi1CMiI6MiwiUjA1LUIxIjoyLCJSMDUtQjIiOjIsIlIwNCI6MiwiUjAzIjoyLCJSMDItQjIiOjJ9fSx7ImlkIjoiYTIiLCJuYW1lIjoiVGllIGJlYW0gd29ya3MiLCJvbiI6dHJ1ZSwic3QiOnsiUjEwIjoyLCJSMDktQjQiOjIsIlIwOS1CMyI6MiwiUjA5LUIyIjoyLCJSMDktQjEiOjIsIlIxOCI6MiwiUjIxIjoyLCJSMTkiOjIsIlIxNy1CMSI6MiwiUjE3LUIyIjoyLCJSMTctQjMiOjIsIlIxNy1CNCI6MiwiUjE3LUI1IjoyLCJSMTctQjYiOjIsIlIyMiI6MiwiUjIwIjoyLCJSMTEiOjIsIlIyOSI6MiwiUjA4LUI0IjoyLCJSMDgtQjMiOjIsIlIwOC1CMiI6MiwiUjA4LUIxIjoyLCJSMjMiOjIsIlIxMiI6MiwiUjI4IjoyLCJSMzItQjEiOjIsIlIzMi1CMiI6MiwiUjMzLUIxIjoyLCJSMzMtQjIiOjIsIlIyNCI6MiwiUjEzIjoyLCJSMjUtQjEiOjIsIlIyNS1CMiI6MiwiUjI3IjoyLCJSMTYiOjIsIlIxNS1CMSI6MiwiUjE1LUIyIjoyLCJSMjYiOjIsIlIwNy1CNCI6MiwiUjA3LUIzIjoyLCJSMDctQjIiOjIsIlIwNy1CMSI6MiwiUjE0IjoyLCJSMDYtQjEiOjIsIlIwNi1CMiI6MiwiUjA1LUIxIjoyLCJSMDUtQjIiOjIsIlIwNCI6MiwiUjAzIjoyLCJSMDItQjIiOjIsIlIwMi1CMSI6MiwiUjAxIjoxfX0seyJpZCI6ImExIiwibmFtZSI6IlVuZGVyZ3JvdW5kIHdvcmtzIiwib24iOnRydWUsInN0Ijp7IlIxMCI6MiwiUjA5LUI0IjoyLCJSMDktQjMiOjIsIlIwOS1CMiI6MiwiUjA5LUIxIjoyLCJSMTgiOjIsIlIyMSI6MiwiUjE5IjoyLCJSMTctQjEiOjIsIlIxNy1CMiI6MiwiUjE3LUIzIjoyLCJSMTctQjQiOjIsIlIxNy1CNSI6MiwiUjE3LUI2IjoyLCJSMjIiOjIsIlIyMCI6MiwiUjExIjoyLCJSMjkiOjIsIlIwOC1CNCI6MiwiUjA4LUIzIjoyLCJSMDgtQjIiOjIsIlIwOC1CMSI6MiwiUjIzIjoyLCJSMTIiOjIsIlIyOCI6MiwiUjMyLUIxIjoyLCJSMzItQjIiOjIsIlIzMy1CMSI6MiwiUjMzLUIyIjoyLCJSMjQiOjIsIlIxMyI6MiwiUjI1LUIxIjoyLCJSMjUtQjIiOjIsIlIyNyI6MiwiUjE2IjoyLCJSMTUtQjEiOjIsIlIxNS1CMiI6MiwiUjI2IjoyLCJSMDctQjQiOjIsIlIwNy1CMyI6MiwiUjA3LUIyIjoyLCJSMDctQjEiOjIsIlIxNCI6MiwiUjA2LUIxIjoyLCJSMDYtQjIiOjIsIlIwNS1CMSI6MiwiUjA1LUIyIjoyLCJSMDQiOjIsIlIwMyI6MiwiUjAyLUIyIjoyLCJSMDItQjEiOjF9fSx7ImlkIjoiYTUiLCJuYW1lIjoiMUYgc2xhYiIsIm9uIjp0cnVlLCJzdCI6eyJSMDUtQjEiOjIsIlIwNS1CMiI6MiwiUjA2LUIxIjoyLCJSMDYtQjIiOjIsIlIwNy1CNCI6MiwiUjA3LUIzIjoyLCJSMDctQjIiOjIsIlIwNy1CMSI6MiwiUjA4LUI0IjoyLCJSMDgtQjMiOjIsIlIwOC1CMiI6MiwiUjA4LUIxIjoyLCJSMDktQjQiOjIsIlIwOS1CMyI6MiwiUjA5LUIyIjoyLCJSMDktQjEiOjIsIlIxNy1CMSI6MiwiUjE3LUIyIjoyLCJSMTctQjMiOjIsIlIxNy1CNCI6MiwiUjE3LUI1IjoyLCJSMTctQjYiOjIsIlIyMiI6MiwiUjIzIjoyLCJSMjQiOjIsIlIxNiI6MiwiUjE4IjoyLCJSMjEiOjIsIlIyNyI6MiwiUjEzIjoyLCJSMTQiOjIsIlIyNiI6MiwiUjI1LUIxIjoyLCJSMjUtQjIiOjIsIlIxNS1CMSI6MiwiUjE1LUIyIjoyLCJSMzMtQjIiOjIsIlIxMCI6MiwiUjMyLUIxIjoyLCJSMzItQjIiOjIsIlIzMy1CMSI6MiwiUjA0IjoyLCJSMTIiOjF9fSx7ImlkIjoiYTYiLCJuYW1lIjoiMkYgc2xhYiIsIm9uIjp0cnVlLCJzdCI6eyJSMTgiOjIsIlIwOS1CNCI6MiwiUjA5LUIzIjoyLCJSMDktQjIiOjIsIlIwOS1CMSI6MiwiUjA4LUI0IjoyLCJSMDgtQjMiOjIsIlIwOC1CMiI6MiwiUjA4LUIxIjoyLCJSMTctQjEiOjIsIlIxNy1CMiI6MiwiUjE3LUIzIjoyLCJSMTctQjQiOjIsIlIxNy1CNSI6MiwiUjE3LUI2IjoyLCJSMjIiOjIsIlIyMSI6MiwiUjIzIjoyLCJSMDctQjQiOjIsIlIwNy1CMyI6MiwiUjA3LUIyIjoyLCJSMDctQjEiOjIsIlIyNCI6MiwiUjE2IjoyLCJSMTUtQjEiOjIsIlIxNS1CMiI6MiwiUjE0IjoyLCJSMjUtQjEiOjIsIlIyNS1CMiI6MiwiUjI2IjoyLCJSMDYtQjEiOjIsIlIwNi1CMiI6MiwiUjA1LUIxIjoyLCJSMDUtQjIiOjIsIlIxMCI6MiwiUjEzIjoyLCJSMjciOjIsIlIzMy1CMiI6MiwiUjMzLUIxIjoyLCJSMzItQjIiOjIsIlIzMi1CMSI6MX19LHsiaWQiOiJhNyIsIm5hbWUiOiJSRiBzbGFiIiwib24iOnRydWUsInN0Ijp7IlIxOCI6MiwiUjIxIjoyLCJSMTAiOjIsIlIyMiI6MiwiUjIzIjoyLCJSMTctQjEiOjIsIlIxNy1CMiI6MiwiUjE3LUIzIjoyLCJSMTctQjQiOjIsIlIxNy1CNSI6MiwiUjE3LUI2IjoyLCJSMDktQjQiOjIsIlIwOS1CMyI6MiwiUjA5LUIyIjoyLCJSMDktQjEiOjIsIlIwOC1CNCI6MiwiUjA4LUIzIjoyLCJSMDgtQjIiOjIsIlIwOC1CMSI6MiwiUjA3LUI0IjoyLCJSMDctQjMiOjIsIlIwNy1CMiI6MiwiUjA3LUIxIjoyLCJSMDYtQjEiOjIsIlIwNi1CMiI6MiwiUjA1LUIxIjoyLCJSMDUtQjIiOjIsIlIxNCI6MiwiUjE1LUIyIjoyLCJSMTUtQjEiOjIsIlIyNS1CMiI6MiwiUjI1LUIxIjoyLCJSMjYiOjIsIlIyNCI6MiwiUjE2IjoyLCJSMTMiOjIsIlIyNyI6MiwiUjMzLUIyIjoyLCJSMzMtQjEiOjJ9fSx7ImlkIjoiYTgiLCJuYW1lIjoiMXN0IEZpeCIsIm9uIjp0cnVlLCJzdCI6eyJSMTgiOjIsIlIyMSI6MiwiUjIyIjoyLCJSMjMiOjIsIlIyNCI6MiwiUjE2IjoyLCJSMTUtQjEiOjIsIlIxNS1CMiI6MiwiUjE0IjoyLCJSMjUtQjEiOjIsIlIyNS1CMiI6MiwiUjA5LUI0IjoyLCJSMDktQjMiOjIsIlIwOS1CMiI6MiwiUjA5LUIxIjoyLCJSMTctQjEiOjIsIlIxNy1CMiI6MiwiUjE3LUIzIjoyLCJSMTctQjQiOjIsIlIxNy1CNSI6MiwiUjE3LUI2IjoyLCJSMDgtQjQiOjIsIlIwOC1CMyI6MiwiUjA4LUIyIjoyLCJSMDgtQjEiOjIsIlIwNy1CMSI6MiwiUjA3LUIyIjoyLCJSMDctQjMiOjIsIlIwNi1CMSI6MSwiUjA3LUI0IjoyfX0seyJpZCI6ImE5IiwibmFtZSI6IlJpc2VyIFdvcmtzIChXUytEUitIVkFDKSIsIm9uIjp0cnVlLCJzdCI6eyJSMTgiOjIsIlIyMSI6MiwiUjIyIjoyLCJSMjMiOjIsIlIyNCI6MiwiUjE2IjoyLCJSMTUtQjEiOjIsIlIxNS1CMiI6MiwiUjI1LUIxIjoyLCJSMjUtQjIiOjIsIlIxNCI6MiwiUjA5LUI0IjoyLCJSMDktQjMiOjIsIlIwOS1CMiI6MiwiUjA5LUIxIjoyLCJSMDgtQjQiOjIsIlIwOC1CMyI6MiwiUjA4LUIyIjoxLCJSMDgtQjEiOjEsIlIwNy1CNCI6MSwiUjA3LUIzIjoxLCJSMDctQjIiOjEsIlIwNy1CMSI6MSwiUjA2LUIxIjoxLCJSMDYtQjIiOjEsIlIxNy1CMSI6MiwiUjE3LUIyIjoyLCJSMTctQjMiOjIsIlIxNy1CNCI6MiwiUjE3LUI1IjoyLCJSMTctQjYiOjJ9LCJzdWIiOnsid3MiOnsiUjE4IjoyLCJSMjEiOjIsIlIyMiI6MiwiUjIzIjoyLCJSMjQiOjIsIlIxNiI6MiwiUjE1LUIxIjoyLCJSMTUtQjIiOjIsIlIyNS1CMSI6MiwiUjI1LUIyIjoyLCJSMTQiOjIsIlIwOS1CNCI6MiwiUjA5LUIzIjoyLCJSMDktQjIiOjIsIlIwOS1CMSI6MiwiUjA4LUI0IjoyLCJSMDgtQjMiOjIsIlIwOC1CMiI6MSwiUjA4LUIxIjoxLCJSMDctQjQiOjEsIlIwNy1CMyI6MSwiUjA3LUIyIjoxLCJSMDctQjEiOjEsIlIwNi1CMSI6MSwiUjA2LUIyIjoxLCJSMTctQjEiOjIsIlIxNy1CMiI6MiwiUjE3LUIzIjoyLCJSMTctQjQiOjIsIlIxNy1CNSI6MiwiUjE3LUI2IjoyfSwiZHIiOnsiUjE4IjoyLCJSMjEiOjIsIlIyMiI6MiwiUjIzIjoyLCJSMjQiOjIsIlIxNiI6MiwiUjE1LUIxIjoyLCJSMTUtQjIiOjIsIlIyNS1CMSI6MiwiUjI1LUIyIjoyLCJSMTQiOjIsIlIwOS1CNCI6MiwiUjA5LUIzIjoyLCJSMDktQjIiOjIsIlIwOS1CMSI6MiwiUjA4LUI0IjoyLCJSMDgtQjMiOjIsIlIwOC1CMiI6MSwiUjA4LUIxIjoxLCJSMDctQjQiOjEsIlIwNy1CMyI6MSwiUjA3LUIyIjoxLCJSMDctQjEiOjEsIlIwNi1CMSI6MSwiUjA2LUIyIjoxLCJSMTctQjEiOjIsIlIxNy1CMiI6MiwiUjE3LUIzIjoyLCJSMTctQjQiOjIsIlIxNy1CNSI6MiwiUjE3LUI2IjoyfSwiaGQiOnsiUjE4IjoyLCJSMjEiOjIsIlIyMiI6MiwiUjIzIjoyLCJSMjQiOjIsIlIxNiI6MiwiUjE1LUIxIjoyLCJSMTUtQjIiOjIsIlIyNS1CMSI6MiwiUjI1LUIyIjoyLCJSMTQiOjIsIlIwOS1CNCI6MiwiUjA5LUIzIjoyLCJSMDktQjIiOjIsIlIwOS1CMSI6MiwiUjA4LUI0IjoyLCJSMDgtQjMiOjIsIlIwOC1CMiI6MiwiUjA4LUIxIjoyLCJSMDctQjQiOjIsIlIwNy1CMyI6MiwiUjA3LUIyIjoyLCJSMDctQjEiOjIsIlIwNi1CMSI6MiwiUjA2LUIyIjoxLCJSMTctQjEiOjIsIlIxNy1CMiI6MiwiUjE3LUIzIjoyLCJSMTctQjQiOjIsIlIxNy1CNSI6MiwiUjE3LUI2IjoyfSwiaGMiOnsiUjE4IjoyLCJSMjEiOjIsIlIyMiI6MiwiUjIzIjoyLCJSMjQiOjIsIlIxNiI6MiwiUjE1LUIxIjoyLCJSMTUtQjIiOjIsIlIyNS1CMSI6MiwiUjI1LUIyIjoyLCJSMTQiOjIsIlIwOS1CNCI6MiwiUjA5LUIzIjoyLCJSMDktQjIiOjIsIlIwOS1CMSI6MiwiUjA4LUI0IjoyLCJSMDgtQjMiOjIsIlIwOC1CMiI6MiwiUjA4LUIxIjoyLCJSMDctQjQiOjIsIlIwNy1CMyI6MiwiUjA3LUIyIjoyLCJSMDctQjEiOjIsIlIwNi1CMSI6MiwiUjA2LUIyIjoxLCJSMTctQjEiOjIsIlIxNy1CMiI6MiwiUjE3LUIzIjoyLCJSMTctQjQiOjIsIlIxNy1CNSI6MiwiUjE3LUI2IjoyfX19LHsiaWQiOiJhMTAiLCJuYW1lIjoiRFIgSC9MIiwib24iOnRydWUsInN0Ijp7IlIxOCI6MiwiUjIxIjoyLCJSMjIiOjIsIlIyMyI6MiwiUjI0IjoyLCJSMjUtQjEiOjIsIlIyNS1CMiI6MiwiUjE1LUIxIjoyLCJSMTUtQjIiOjIsIlIxNCI6MiwiUjE2IjoyLCJSMTctQjYiOjIsIlIxNy1CNSI6MiwiUjE3LUI0IjoyLCJSMTctQjMiOjIsIlIxNy1CMiI6MiwiUjE3LUIxIjoyLCJSMDktQjQiOjIsIlIwOS1CMyI6MiwiUjA5LUIyIjoyLCJSMDktQjEiOjIsIlIwOC1CNCI6MiwiUjA4LUIzIjoxfX0seyJpZCI6ImExMSIsIm5hbWUiOiJXUyBIL0wiLCJvbiI6dHJ1ZSwic3QiOnsiUjE4IjoyLCJSMjEiOjIsIlIyMiI6MiwiUjIzIjoyLCJSMTctQjEiOjIsIlIyNCI6MiwiUjE1LUIxIjoyLCJSMTUtQjIiOjIsIlIxNy1CMiI6Mn19LHsiaWQiOiJhMTIiLCJuYW1lIjoiSFZBQyBIL0wiLCJvbiI6dHJ1ZSwic3QiOnsiUjE4IjoxfX0seyJpZCI6ImExMyIsIm5hbWUiOiJGbG9vciBQaXBpbmcgV29ya3MgLSBFTCIsIm9uIjp0cnVlLCJzdCI6eyJSMTgiOjIsIlIyMSI6MiwiUjIyIjoyLCJSMjMiOjIsIlIyNCI6MiwiUjE3LUIxIjoyLCJSMTctQjIiOjIsIlIxNy1CMyI6MiwiUjE3LUI0IjoyLCJSMTctQjUiOjIsIlIxNy1CNiI6MiwiUjA5LUI0IjoyLCJSMDktQjMiOjIsIlIwOS1CMiI6MiwiUjA5LUIxIjoyLCJSMTYiOjIsIlIwOC1CNCI6MX19LHsiaWQiOiJhMTQiLCJuYW1lIjoiUm9vZiBDb21ibyBDbGVhcmFuY2UiLCJvbiI6dHJ1ZSwic3QiOnsiUjE4IjoyLCJSMjEiOjIsIlIyMiI6MiwiUjIzIjoyLCJSMTctQjEiOjIsIlIxNy1CMiI6MiwiUjE3LUIzIjoyLCJSMTctQjQiOjIsIlIxNy1CNSI6MiwiUjE3LUI2IjoyLCJSMjQiOjIsIlIxNiI6MiwiUjE1LUIxIjoyLCJSMTUtQjIiOjIsIlIxNCI6Mn19LHsiaWQiOiJhMTUiLCJuYW1lIjoiRXh0ZXJuYWwgV29ya3MiLCJvbiI6dHJ1ZSwic3QiOnsiUjE4IjoyLCJSMjEiOjIsIlIyMiI6MiwiUjE3LUIxIjoyLCJSMTctQjIiOjIsIlIxNy1CMyI6MiwiUjE3LUI0IjoxfX0seyJpZCI6ImFtdzNhY295eTY2IiwibmFtZSI6IkxQRyBFeHRlcm5hbCBQaXBpbmciLCJvbiI6dHJ1ZSwic3QiOnsiUjE4IjoyLCJSMjEiOjIsIlIxNy1CMSI6MiwiUjE3LUIyIjoyLCJSMTctQjMiOjIsIlIyMiI6Mn19LHsiaWQiOiJhbXczYWNndm8zMyIsIm5hbWUiOiJMUEcgQ29wcGVyIFBpcGluZyIsIm9uIjp0cnVlLCJzdCI6eyJSMTgiOjEsIlIyMSI6MSwiUjIyIjoxfX0seyJpZCI6ImEyNyIsIm5hbWUiOiJDQVQ2IFdpcmluZyIsIm9uIjp0cnVlLCJzdCI6eyJSMTgiOjIsIlIyMSI6MiwiUjIyIjoyLCJSMjMiOjIsIlIyNCI6MiwiUjE3LUIxIjoyLCJSMTctQjIiOjIsIlIxNy1CMyI6MiwiUjE3LUI0IjoyfX0seyJpZCI6ImExNiIsIm5hbWUiOiJXaXJpbmciLCJvbiI6dHJ1ZSwic3QiOnt9fSx7ImlkIjoiYTE3IiwibmFtZSI6IkFybW91ciBDYWJsZSBQdWxsaW5nIiwib24iOmZhbHNlLCJzdCI6e319LHsiaWQiOiJhMTgiLCJuYW1lIjoiU3dpdGNoZ2VhciIsIm9uIjpmYWxzZSwic3QiOnt9fSx7ImlkIjoiYTE5IiwibmFtZSI6IkRCIERyZXNzaW5nIiwib24iOmZhbHNlLCJzdCI6e319LHsiaWQiOiJhMjAiLCJuYW1lIjoiMTJVIERyZXNzaW5nIiwib24iOmZhbHNlLCJzdCI6e319LHsiaWQiOiJhMjgiLCJuYW1lIjoiU3dpdGNoIFNvY2tldCBJbnN0YWxsYXRpb24iLCJvbiI6ZmFsc2UsInN0Ijp7fX0seyJpZCI6ImEyMSIsIm5hbWUiOiJMaWdodCBJbnN0YWxsYXRpb24iLCJvbiI6ZmFsc2UsInN0Ijp7fX0seyJpZCI6ImEyMiIsIm5hbWUiOiJTYW5pdGFyeXdhcmUgSW5zdGFsbGF0aW9uIiwib24iOmZhbHNlLCJzdCI6e319LHsiaWQiOiJhMjMiLCJuYW1lIjoiU29sYXIgV2F0ZXIgSGVhdGVyIEluc3RhbGxhdGlvbiIsIm9uIjpmYWxzZSwic3QiOnt9fSx7ImlkIjoiYTI0IiwibmFtZSI6IkFDIE1hY2hpbmUgSW5zdGFsbGF0aW9uIiwib24iOmZhbHNlLCJzdCI6eyJSMTgiOjEsIlIxNy1CMSI6MX19LHsiaWQiOiJhMjUiLCJuYW1lIjoiSXNvbGF0b3IgSW5zdGFsbGF0aW9uIiwib24iOmZhbHNlLCJzdCI6e319LHsiaWQiOiJhMjYiLCJuYW1lIjoiQm9vc3RlciBQdW1wIEluc3RhbGxhdGlvbiIsIm9uIjpmYWxzZSwic3QiOnt9fSx7ImlkIjoiYTI5IiwibmFtZSI6IkVhcnRoaW5nIiwib24iOmZhbHNlLCJzdCI6e319XSwidmlsbGFzIjp7IlIwNCI6MTgsIlIwMSI6MTgsIlIwMi1CMSI6MTQsIlIwMi1CMiI6MTIsIlIwMyI6MTQsIlIzMS1CMiI6MTIsIlIzMS1CMSI6MTQsIlIzMCI6MTgsIlIxMCI6MjAsIlIxOSI6MTgsIlIyMCI6MTgsIlIxMSI6MTgsIlIyOSI6MTgsIlIzMi1CMSI6MTAsIlIzMi1CMiI6MTQsIlIzMy1CMSI6MTAsIlIwOS1CNCI6MSwiUjA5LUIzIjoyLCJSMTgiOjQsIlIyMSI6NiwiUjA5LUIyIjozLCJSMTctQjEiOjMsIlIyMiI6MTAsIlIwOS1CMSI6MywiUjE3LUIyIjozLCJSMTctQjMiOjMsIlIwOC1CNCI6MywiUjIzIjoxMiwiUjEyIjoxMCwiUjE3LUI0IjozLCJSMDgtQjMiOjMsIlIyOCI6OCwiUjE3LUI1IjozLCJSMDgtQjIiOjMsIlIzMy1CMiI6MTIsIlIyNCI6MTAsIlIxNy1CNiI6MSwiUjEzIjoxNCwiUjA4LUIxIjozLCJSMjUtQjEiOjEyLCJSMjciOjYsIlIyNS1CMiI6MTQsIlIxNiI6MywiUjE1LUIxIjoxMiwiUjI2IjoxNCwiUjE1LUIyIjoxNCwiUjA3LUI0IjozLCJSMDctQjMiOjMsIlIxNCI6MTgsIlIwNy1CMiI6MywiUjA3LUIxIjozLCJSMDYtQjEiOjE0LCJSMDYtQjIiOjE0LCJSMDUtQjEiOjE0LCJSMDUtQjIiOjE0fSwidXBkYXRlZCI6MTc5NDY0MDMzNDU2Nywic25hcHYiOjIsImNtIjpbeyJpZCI6ImNtdzM4enBvNTAiLCJ0aXRsZSI6IkxQRyBDT1BQRVIgUElQSU5HIiwicGFuZWxzIjpbeyJ0aXRsZSI6IlByb2dyZXNzIHN0YXR1cyIsImxlZyI6W3siaWQiOiJsbXczOHpwbzUxIiwibGFiZWwiOiJDb21wbGV0ZWQiLCJjb2xvciI6IiMyZTllNWIifSx7ImlkIjoibG13Mzh6cG81MiIsImxhYmVsIjoiT25nb2luZyIsImNvbG9yIjoiI2RjOWIwZCJ9LHsiaWQiOiJsbXczOHpwbzUzIiwibGFiZWwiOiJOb3Qgc3RhcnRlZCIsImNvbG9yIjoiI2M5Y2RlMCJ9XSwiY2VsbHMiOnsiUjE4IjoibG13Mzh6cG81MiIsIlIyMSI6ImxtdzM4enBvNTIiLCJSMjIiOiJsbXczOHpwbzUyIn19XX0seyJpZCI6ImNtdzM5MHE5dTQiLCJ0aXRsZSI6IkxQRyBFeHRlcm5hbCBQaXBpbmciLCJwYW5lbHMiOlt7InRpdGxlIjoiUHJvZ3Jlc3Mgc3RhdHVzIiwibGVnIjpbeyJpZCI6ImxtdzM5MHE5dTUiLCJsYWJlbCI6IkNvbXBsZXRlZCIsImNvbG9yIjoiIzJlOWU1YiJ9LHsiaWQiOiJsbXczOTBxOXU2IiwibGFiZWwiOiJPbmdvaW5nIiwiY29sb3IiOiIjZGM5YjBkIn0seyJpZCI6ImxtdzM5MHE5dTciLCJsYWJlbCI6Ik5vdCBzdGFydGVkIiwiY29sb3IiOiIjYzljZGUwIn1dLCJjZWxscyI6eyJSMTgiOiJsbXczOTBxOXU1IiwiUjIxIjoibG13MzkwcTl1NSIsIlIyMiI6ImxtdzM5MHE5dTUiLCJSMTctQjEiOiJsbXczOTBxOXU1IiwiUjE3LUIyIjoibG13MzkwcTl1NSIsIlIxNy1CMyI6ImxtdzM5MHE5dTUifX1dfV0sIm5hbWVzIjp7IlIwNi1CMSI6IlRILVIwNiBCMiIsIlIwNS1CMSI6IlRILVIwNSBCMiIsIlIwNS1CMiI6IlRILVIwNSBCMSIsIlIwNi1CMiI6IlRILVIwNiBCMSJ9LCJ2dHlwZXMiOlt7ImlkIjoiZDNiciIsIm5hbWUiOiIzQlIiLCJjb2xvciI6IiMyZjdkZTEifSx7ImlkIjoiZDRiciIsIm5hbWUiOiI0QlIiLCJjb2xvciI6IiMyZTlkNWIifSx7ImlkIjoiZDViciIsIm5hbWUiOiI1QlIiLCJjb2xvciI6IiNlODc0MmEifSx7ImlkIjoiZDRicmx1eCIsIm5hbWUiOiI0QlItTFVYIiwiY29sb3IiOiIjN2I0ZmQxIn0seyJpZCI6ImQ1YnJsdXgiLCJuYW1lIjoiNUJSLUxVWCIsImNvbG9yIjoiI2QzM2Y2YSJ9LHsiaWQiOiJkNGJyc3RhbmRhbG9uZSIsIm5hbWUiOiI0QlItU1RBTkRBTE9ORSIsImNvbG9yIjoiI2I4OTAyYSJ9XSwidm1peCI6eyJSMDEiOnsiZDNiciI6MTh9LCJSMDItQjEiOnsiZDNiciI6MTR9LCJSMDItQjIiOnsiZDNiciI6MTJ9LCJSMDMiOnsiZDNiciI6MTR9LCJSMDQiOnsiZDNiciI6MTh9LCJSMDUtQjEiOnsiZDNiciI6MTR9LCJSMDUtQjIiOnsiZDNiciI6MTR9LCJSMDYtQjEiOnsiZDNiciI6MTR9LCJSMDYtQjIiOnsiZDNiciI6MTR9LCJSMDctQjEiOnsiZDRicmx1eCI6MSwiZDVicmx1eCI6Mn0sIlIwNy1CMiI6eyJkNGJybHV4IjoxLCJkNWJybHV4IjoyfSwiUjA3LUIzIjp7ImQ0YnJsdXgiOjEsImQ1YnJsdXgiOjJ9LCJSMDctQjQiOnsiZDRicmx1eCI6MSwiZDVicmx1eCI6Mn0sIlIwOC1CMSI6eyJkNGJybHV4IjoxLCJkNWJybHV4IjoyfSwiUjA4LUIyIjp7ImQ0YnJsdXgiOjEsImQ1YnJsdXgiOjJ9LCJSMDgtQjMiOnsiZDRicmx1eCI6MSwiZDVicmx1eCI6Mn0sIlIwOC1CNCI6eyJkNGJybHV4IjoxLCJkNWJybHV4IjoyfSwiUjA5LUIxIjp7ImQ0YnJsdXgiOjEsImQ1YnJsdXgiOjJ9LCJSMDktQjIiOnsiZDRicmx1eCI6MSwiZDVicmx1eCI6Mn0sIlIwOS1CMyI6eyJkNWJybHV4IjoyfSwiUjA5LUI0Ijp7ImQ0YnJzdGFuZGFsb25lIjoxfSwiUjEwIjp7ImQzYnIiOjIwfSwiUjExIjp7ImQzYnIiOjE4fSwiUjEyIjp7ImQzYnIiOjEwfSwiUjEzIjp7ImQzYnIiOjE0fSwiUjE0Ijp7ImQzYnIiOjE4fSwiUjE1LUIxIjp7ImQ0YnIiOjEyfSwiUjE1LUIyIjp7ImQ0YnIiOjE0fSwiUjE2Ijp7ImQ0YnJsdXgiOjEsImQ1YnJsdXgiOjJ9LCJSMTctQjEiOnsiZDRicmx1eCI6MSwiZDVicmx1eCI6Mn0sIlIxNy1CMiI6eyJkNGJybHV4IjoxLCJkNWJybHV4IjoyfSwiUjE3LUIzIjp7ImQ0YnJsdXgiOjEsImQ1YnJsdXgiOjJ9LCJSMTctQjQiOnsiZDRicmx1eCI6MSwiZDVicmx1eCI6Mn0sIlIxNy1CNSI6eyJkNGJybHV4IjoxLCJkNWJybHV4IjoyfSwiUjE3LUI2Ijp7ImQ0YnJzdGFuZGFsb25lIjoxfSwiUjE4Ijp7ImQzYnIiOjR9LCJSMTkiOnsiZDNiciI6MTh9LCJSMjAiOnsiZDNiciI6MTh9LCJSMjEiOnsiZDNiciI6Nn0sIlIyMiI6eyJkM2JyIjoxMH0sIlIyMyI6eyJkM2JyIjoxMn0sIlIyNCI6eyJkM2JyIjoxMH0sIlIyNS1CMSI6eyJkNGJyIjoxMn0sIlIyNS1CMiI6eyJkNGJyIjoxNH0sIlIyNiI6eyJkM2JyIjoxNH0sIlIyNyI6eyJkM2JyIjo2fSwiUjI4Ijp7ImQzYnIiOjh9LCJSMjkiOnsiZDNiciI6MTh9LCJSMzAiOnsiZDNiciI6MTh9LCJSMzEtQjEiOnsiZDNiciI6MTR9LCJSMzEtQjIiOnsiZDNiciI6MTJ9LCJSMzItQjEiOnsiZDRiciI6MTB9LCJSMzItQjIiOnsiZDRiciI6MTR9LCJSMzMtQjEiOnsiZDRiciI6MTB9LCJSMzMtQjIiOnsiZDNiciI6MTJ9fSwiYWN0czI3IjoxLCJhY3RzMjYiOjEsImFjdHMyOCI6MSwib3JkMSI6MSwiaW1nIjpudWxsfV19","tv2": "eyJhcHAiOiJtZXAtcHJvZ3Jlc3MtbWFwcyIsInYiOjMsImFwcFZlcnNpb24iOiIxLjIiLCJzYXZlZCI6IjIwMjYtMTEtMTRUMTE6MzE6NTEuOTc3WiIsInByb2plY3RzIjpbeyJpZCI6InRhb3JtaW5hLTAyIiwiYnVpbHRpbiI6ZmFsc2UsIm5hbWUiOiJUYW9ybWluYSBWaWxsYWdlIC0gMDIiLCJtZXRhIjp7ImRlc2MiOiJUYW9ybWluYSBWaWxsYWdlLTIsIFRvd25ob3VzZXMgQ29tbXVuaXR5Iiwib3duZXIiOiJSZXBvcnRhZ2UgUHJpbWUgUHJvcGVydGllcyIsImNvbnN1bHRhbnQiOiIiLCJjb250cmFjdG9yIjoiTW9kdW4gR3VsZiBCdWlsZGluZyBDb250cmFjdGluZyBMLkwuQy4ifSwidmIiOlswLDAsMjY0MCwxOTMwXSwiaW1nT3AiOjAuNDUsImJsb2NrcyI6W3siaWQiOiJTMSIsIm5hbWUiOiJUSC1SMDEiLCJwb2x5IjpbWzE5ODEuOCw0MTcuM10sWzE4MzEuNSwxMDExLjddLFsxOTM2LjksMTA0Mi40XSxbMjA4OS41LDQ0Ny4yXV19LHsiaWQiOiJTMiIsIm5hbWUiOiJUSC1SMDIiLCJwb2x5IjpbWzE4MjUuNSwxMDQ5LjFdLFsxNjU1LjcsMTcyNC40XSxbMTc2MS45LDE3NTQuM10sWzE5MzMuMiwxMDgwLjVdXX0seyJpZCI6IlMzIiwibmFtZSI6IlRILVIwMyIsInBvbHkiOltbMTE2Ny41LDE2OTcuNF0sWzExNTEuOCwxODEwLjRdLFsxNjQ1LjMsMTg4NS4xXSxbMTY2MS43LDE3NzMuN11dfSx7ImlkIjoiUzQiLCJuYW1lIjoiVEgtUjA0IiwicG9seSI6W1s2NTAuNywxNjE2LjddLFs2MzMuNSwxNzI5LjZdLFsxMTI3LjgsMTgwNS45XSxbMTE0NSwxNjkzXV19LHsiaWQiOiJTNSIsIm5hbWUiOiJUSC1SMDUiLCJwb2x5IjpbWzYzMS4zLDEyMTIuOV0sWzUxNi45LDEyMjIuNl0sWzU1MS4zLDE2MDYuMl0sWzY2NSwxNTk2LjVdXX0seyJpZCI6IlM2IiwibmFtZSI6IlRILVIwNiIsInBvbHkiOltbNTg5LjQsNzQ4LjVdLFs0NzUuOCw3NTldLFs1MTQuNiwxMTk5LjRdLFs2MjkuMSwxMTg5LjddXX0seyJpZCI6IlM3IiwibmFtZSI6IlRILVIwNyIsInBvbHkiOltbNTk4LjQsNTU0LjhdLFs1MDcuMiw2NjQuOF0sWzU5My4yLDczOC4xXSxbNjg1LjEsNjI3LjRdXX0seyJpZCI6IlM4IiwibmFtZSI6IlRILVIwOCIsInBvbHkiOltbMTA5Ni40LDMxMy4zXSxbNjQ3LDUxNS4yXSxbNjkyLjYsNjE5LjldLFsxMTQyLDQxNi41XV19LHsiaWQiOiJTOSIsIm5hbWUiOiJUSC1SMDkiLCJwb2x5IjpbWzE1NzIsOTVdLFsxMTE2LjYsMzAxLjRdLFsxMTYyLjIsNDA1LjNdLFsxNjE3LjYsMTk4LjldXX0seyJpZCI6IlMxMCIsIm5hbWUiOiJUSC1SMTAiLCJwb2x5IjpbWzE2ODguNyw0NC45XSxbMTY1Mi44LDE1Mi41XSxbMTg1My45LDIyMC42XSxbMTg4OS44LDExMi4yXV19LHsiaWQiOiJTMTEiLCJuYW1lIjoiVEgtUjExIiwicG9seSI6W1sxOTA5LjIsMTE3LjRdLFsxODc0LjgsMjI1LjhdLFsyMTI5LjgsMzEwLjNdLFsyMTY0LjIsMjAyLjZdXX0seyJpZCI6IlMxMiIsIm5hbWUiOiJUSC1SMTIiLCJwb2x5IjpbWzE3NzAuOSwzNTIuOV0sWzE2MTkuMSw5NDQuNF0sWzE3MjYsOTc2LjZdLFsxODc2LjMsMzgyLjldXX0seyJpZCI6IlMxMyIsIm5hbWUiOiJUSC1SMTMiLCJwb2x5IjpbWzE2NTUuNywzMjQuNV0sWzE1MDQuNyw5MTYuOF0sWzE2MTAuMSw5NDguMl0sWzE3NjEuOSwzNTQuNF1dfSx7ImlkIjoiUzE0IiwibmFtZSI6IlRILVIxNCIsInBvbHkiOltbMTYxNi4xLDk3OC44XSxbMTQ2MS4zLDE1ODMuOF0sWzE1NjcuNSwxNjE1LjJdLFsxNzIxLjYsMTAxMC4yXV19LHsiaWQiOiJTMTUiLCJuYW1lIjoiVEgtUjE1IiwicG9seSI6W1sxNTAxLDk1MC40XSxbMTM0Ni45LDE1NTYuMV0sWzE0NTIuNCwxNTg2LjhdLFsxNjA3LjEsOTgyLjZdXX0seyJpZCI6IlMxNiIsIm5hbWUiOiJUSC1SMTYiLCJwb2x5IjpbWzEyMjkuNSwxMTA4LjJdLFsxMTIzLjMsMTUzNy40XSxbMTIzNCwxNTY0LjNdLFsxMzM5LjQsMTEzNC40XV19LHsiaWQiOiJTMTciLCJuYW1lIjoiVEgtUjE3IiwicG9seSI6W1sxMTE0LjQsMTA3OS44XSxbMTAwOC45LDE1MDkuOF0sWzExMjAuMywxNTM1LjldLFsxMjI1LDExMDZdXX0seyJpZCI6IlMxOCIsIm5hbWUiOiJUSC1SMTgiLCJwb2x5IjpbWzEzNTcuNCw1OTkuN10sWzEyMzUuNSwxMDgwLjVdLFsxMzQwLjksMTExMS45XSxbMTQ2NS4xLDYzMC40XV19LHsiaWQiOiJTMTkiLCJuYW1lIjoiVEgtUjE5IiwicG9seSI6W1sxMjQ1LjIsNTcyXSxbMTEyMS4xLDEwNTEuNF0sWzEyMjguOCwxMDg0LjNdLFsxMzUwLjcsNjAyLjddXX0seyJpZCI6IlMyMCIsIm5hbWUiOiJUSC1SMjAiLCJwb2x5IjpbWzEwMDYuNyw2MDEuMl0sWzg3MC42LDExMzguOV0sWzk3Ny41LDExNjkuNV0sWzExMTQuNCw2MzEuOV1dfSx7ImlkIjoiUzIxIiwibmFtZSI6IlRILVIyMSBCMSIsInBvbHkiOltbODE0LjUsNzY2LjVdLFs3MDAuOCw3NzYuOV0sWzczNS4yLDExNjkuNV0sWzg0OC45LDExNTldXX0seyJpZCI6IlMyMiIsIm5hbWUiOiJUSC1SMjEgQjIiLCJwb2x5IjpbWzg0OS43LDExNjIuOF0sWzczNiwxMTcyLjVdLFs3NjQuNCwxNDg5LjZdLFs4NzguMSwxNDc5LjhdXX1dLCJhY3RzIjpbeyJpZCI6ImEzIiwibmFtZSI6IldhdGVyIHRhbmsgaW5zdGFsbGF0aW9uIiwib24iOnRydWUsInN0Ijp7IlMxIjoyLCJTMiI6MX19LHsiaWQiOiJhNCIsIm5hbWUiOiJXYXRlciB0YW5rIGNvbm5lY3Rpb24iLCJvbiI6dHJ1ZSwic3QiOnt9fSx7ImlkIjoiYTIiLCJuYW1lIjoiVGllIGJlYW0gd29ya3MiLCJvbiI6dHJ1ZSwic3QiOnsiUzEiOjF9fSx7ImlkIjoiYTEiLCJuYW1lIjoiVW5kZXJncm91bmQgd29ya3MiLCJvbiI6dHJ1ZSwic3QiOnt9fSx7ImlkIjoiYTUiLCJuYW1lIjoiMUYgc2xhYiIsIm9uIjpmYWxzZSwic3QiOnt9fSx7ImlkIjoiYTYiLCJuYW1lIjoiMkYgc2xhYiIsIm9uIjpmYWxzZSwic3QiOnt9fSx7ImlkIjoiYTciLCJuYW1lIjoiUkYgc2xhYiIsIm9uIjpmYWxzZSwic3QiOnt9fSx7ImlkIjoiYTgiLCJuYW1lIjoiMXN0IEZpeCIsIm9uIjpmYWxzZSwic3QiOnt9fSx7ImlkIjoiYTkiLCJuYW1lIjoiUmlzZXIgV29ya3MgKFdTK0RSK0hWQUMpIiwib24iOmZhbHNlLCJzdCI6e30sInN1YiI6eyJ3cyI6e30sImRyIjp7fSwiaGQiOnt9LCJoYyI6e319fSx7ImlkIjoiYTEwIiwibmFtZSI6IkRSIEgvTCIsIm9uIjpmYWxzZSwic3QiOnt9fSx7ImlkIjoiYTExIiwibmFtZSI6IldTIEgvTCIsIm9uIjpmYWxzZSwic3QiOnt9fSx7ImlkIjoiYTEyIiwibmFtZSI6IkhWQUMgSC9MIiwib24iOmZhbHNlLCJzdCI6e319LHsiaWQiOiJhMTMiLCJuYW1lIjoiRmxvb3IgUGlwaW5nIFdvcmtzIC0gRUwiLCJvbiI6ZmFsc2UsInN0Ijp7fX0seyJpZCI6ImExNCIsIm5hbWUiOiJSb29mIENvbWJvIENsZWFyYW5jZSIsIm9uIjpmYWxzZSwic3QiOnt9fSx7ImlkIjoiYTE1IiwibmFtZSI6IkV4dGVybmFsIFdvcmtzIiwib24iOmZhbHNlLCJzdCI6e319LHsiaWQiOiJhMjciLCJuYW1lIjoiQ0FUNiBXaXJpbmciLCJvbiI6ZmFsc2UsInN0Ijp7fX0seyJpZCI6ImExNiIsIm5hbWUiOiJXaXJpbmciLCJvbiI6ZmFsc2UsInN0Ijp7fX0seyJpZCI6ImExNyIsIm5hbWUiOiJBcm1vdXIgQ2FibGUgUHVsbGluZyIsIm9uIjpmYWxzZSwic3QiOnt9fSx7ImlkIjoiYTE4IiwibmFtZSI6IlN3aXRjaGdlYXIiLCJvbiI6ZmFsc2UsInN0Ijp7fX0seyJpZCI6ImExOSIsIm5hbWUiOiJEQiBEcmVzc2luZyIsIm9uIjpmYWxzZSwic3QiOnt9fSx7ImlkIjoiYTIwIiwibmFtZSI6IjEyVSBEcmVzc2luZyIsIm9uIjpmYWxzZSwic3QiOnt9fSx7ImlkIjoiYTI4IiwibmFtZSI6IlN3aXRjaCBTb2NrZXQgSW5zdGFsbGF0aW9uIiwib24iOmZhbHNlLCJzdCI6e319LHsiaWQiOiJhMjEiLCJuYW1lIjoiTGlnaHQgSW5zdGFsbGF0aW9uIiwib24iOmZhbHNlLCJzdCI6e319LHsiaWQiOiJhMjIiLCJuYW1lIjoiU2FuaXRhcnl3YXJlIEluc3RhbGxhdGlvbiIsIm9uIjpmYWxzZSwic3QiOnt9fSx7ImlkIjoiYTIzIiwibmFtZSI6IlNvbGFyIFdhdGVyIEhlYXRlciBJbnN0YWxsYXRpb24iLCJvbiI6ZmFsc2UsInN0Ijp7fX0seyJpZCI6ImEyNCIsIm5hbWUiOiJBQyBNYWNoaW5lIEluc3RhbGxhdGlvbiIsIm9uIjpmYWxzZSwic3QiOnt9fSx7ImlkIjoiYTI1IiwibmFtZSI6Iklzb2xhdG9yIEluc3RhbGxhdGlvbiIsIm9uIjpmYWxzZSwic3QiOnt9fSx7ImlkIjoiYTI2IiwibmFtZSI6IkJvb3N0ZXIgUHVtcCBJbnN0YWxsYXRpb24iLCJvbiI6ZmFsc2UsInN0Ijp7fX0seyJpZCI6ImEyOSIsIm5hbWUiOiJFYXJ0aGluZywgVCZDIiwib24iOmZhbHNlLCJzdCI6e319XSwidmlsbGFzIjp7IlMxIjoxNCwiUzIiOjE2LCJTMyI6MTYsIlM0IjoxNiwiUzUiOjEyLCJTNiI6MTQsIlM3Ijo0LCJTOCI6MTYsIlM5IjoxNiwiUzEwIjo2LCJTMTEiOjgsIlMxMiI6MjAsIlMxMyI6MjAsIlMxNCI6MTUsIlMxNSI6MTUsIlMxNiI6MTQsIlMxNyI6MTQsIlMxOCI6MTYsIlMxOSI6MTYsIlMyMCI6MTgsIlMyMSI6MTEsIlMyMiI6MTF9LCJ1cGRhdGVkIjoxNzk0NjM5NTk5MTY2LCJzbmFwdiI6MiwibWF0Ijp7ImlwdCI6eyJhOSI6eyJTOSI6MX0sImEzIjp7IlMxIjoyNDMyMiwiUzIiOjI0MzIyLCJTMTIiOjI0MzIyLCJTMyI6MjQzMjMsIlM0IjoyNDMyMywiUzEzIjoyNDMyMywiUzE0IjoyNDMyMywiUzE1IjoyNDMyM319LCJtYXQiOnsiYTMiOnsiUzEiOjIsIlMyIjoyLCJTMTIiOjIsIlMxMyI6MiwiUzE0IjoyLCJTMTUiOjJ9fX0sIm1hdEVQIjoxLCJtYXRQSSI6MSwidnR5cGVzIjpbeyJpZCI6ImQ0YnIiLCJuYW1lIjoiNEJSIiwiY29sb3IiOiIjZjU3YzAwIiwidGFuayI6eyI1MDAiOjF9fSx7ImlkIjoiZDRicmx1eCIsIm5hbWUiOiI0QlItTFVYIiwiY29sb3IiOiIjZmYwMGM4IiwidGFuayI6eyI2MDAiOjF9fSx7ImlkIjoiZDNicmx1eCIsIm5hbWUiOiIzQlItTFVYIiwiY29sb3IiOiIjN2FlYmZmIiwidGFuayI6eyI4MDAiOjF9fV0sInZtaXgiOnsiUzEiOnsiZDRicmx1eCI6MTR9LCJTMiI6eyJkNGJybHV4IjoxNn0sIlMxMiI6eyJkNGJyIjoyMH0sIlMxMyI6eyJkNGJyIjoyMH0sIlMxNCI6eyJkM2JybHV4IjoxNX0sIlMxNSI6eyJkM2JybHV4IjoxNX0sIlMzIjp7ImQ0YnIiOjE2fSwiUzQiOnsiZDRiciI6MTZ9LCJTMTYiOnsiZDRiciI6MTR9LCJTMTciOnsiZDRiciI6MTR9LCJTMTgiOnsiZDRiciI6MTZ9LCJTMTkiOnsiZDRiciI6MTZ9LCJTMjAiOnsiZDRiciI6MTh9LCJTMjEiOnsiZDRiciI6MTF9LCJTMjIiOnsiZDRiciI6MTF9LCJTNSI6eyJkNGJyIjoxMn0sIlM2Ijp7ImQ0YnIiOjE0fSwiUzciOnsiZDRiciI6NH0sIlM4Ijp7ImQ0YnIiOjE2fSwiUzkiOnsiZDRiciI6MTZ9LCJTMTAiOnsiZDRiciI6Nn0sIlMxMSI6eyJkNGJyIjo4fX0sImFjdHMyNyI6MSwiYWN0czI2IjoxLCJhY3RzMjgiOjEsIm9yZDEiOjEsInQybWl4MSI6MSwiaW1nIjpudWxsfV19","rh1": "eyJhcHAiOiJtZXAtcHJvZ3Jlc3MtbWFwcyIsInYiOjMsImFwcFZlcnNpb24iOiIxLjIiLCJzYXZlZCI6IjIwMjYtMTEtMTRUMTE6MzE6NTEuOTc3WiIsInByb2plY3RzIjpbeyJpZCI6InJlcG9ydGFnZS1oaWxscyIsImJ1aWx0aW4iOmZhbHNlLCJuYW1lIjoiUmVwb3J0YWdlIEhpbGxzIiwibWV0YSI6eyJkZXNjIjoiUmVwb3J0YWdlIEhpbGxzLCBUb3duaG91c2VzIENvbW11bml0eSIsIm93bmVyIjoiUmVwb3J0YWdlIiwiY29uc3VsdGFudCI6IlRvdWNoIENvbnN1bHRhbmN5IiwiY29udHJhY3RvciI6Ik1vZHVuIEd1bGYgQnVpbGRpbmcgQ29udHJhY3RpbmcgTC5MLkMuIn0sInZiIjpbMCwwLDI2NDAsMzAzNV0sImltZ09wIjowLjQ1LCJibG9ja3MiOlt7ImlkIjoiSDEiLCJuYW1lIjoiUkgtMDEiLCJwb2x5IjpbWzk1MC42LDI2MzMuNF0sWzg4Mi44LDI2NzUuOF0sWzEwNjguMiwyOTc4LjhdLFsxMTM1LjEsMjkzNi41XV19LHsiaWQiOiJIMiIsIm5hbWUiOiJSSC0wMiIsInBvbHkiOltbNzM4LjgsMjI4My4zXSxbNjcxLjEsMjMyNi42XSxbODU1LjUsMjYyOC43XSxbOTIzLjMsMjU4Ny4zXV19LHsiaWQiOiJIMyIsIm5hbWUiOiJSSC0wMyIsInBvbHkiOltbNTI1LjIsMTkzNC4xXSxbNDU4LjQsMTk3NS41XSxbNjQzLjgsMjI3OC42XSxbNzEwLjYsMjIzNi4yXSxbNTMxLjgsMTk0MC43XV19LHsiaWQiOiJINCIsIm5hbWUiOiJSSC0wNCIsInBvbHkiOltbMzEzLjQsMTU4NF0sWzI0Ni42LDE2MjYuNF0sWzQzMS4xLDE5MjguNV0sWzQ5OC44LDE4ODcuMV1dfSx7ImlkIjoiSDUiLCJuYW1lIjoiUkgtMDUiLCJwb2x5IjpbWzEyNC4yLDEyNzAuNl0sWzU2LjUsMTMxMl0sWzIxOS4zLDE1NzguNF0sWzI4Ny4xLDE1MzYuOV1dfSx7ImlkIjoiSDYiLCJuYW1lIjoiUkgtMDYiLCJwb2x5IjpbWzM5OC4xLDkyOS45XSxbMTMxLjgsMTA5MC44XSxbMTczLjIsMTE2MC41XSxbNDM5LjUsOTk4LjZdXX0seyJpZCI6Ikg3IiwibmFtZSI6IlJILTA3IiwicG9seSI6W1s3MTAuNiw3MzkuOF0sWzQ0NS4yLDkwMC43XSxbNDg2LjYsOTcwLjRdLFs3NTIuOSw4MDguNV1dfSx7ImlkIjoiSDgiLCJuYW1lIjoiUkgtMDgiLCJwb2x5IjpbWzEwMjQsNTQ5LjZdLFs3NTcuNiw3MTEuNV0sWzgwMCw3ODAuMl0sWzEwNjYuNCw2MTguNF1dfSx7ImlkIjoiSDkiLCJuYW1lIjoiUkgtMDkiLCJwb2x5IjpbWzEzMzcuNCwzNTkuNV0sWzEwNzEuMSw1MjEuNF0sWzExMTIuNSw1OTAuMV0sWzEzNzguOCw0MjguMl1dfSx7ImlkIjoiSDEwIiwibmFtZSI6IlJILTEwIiwicG9seSI6W1sxODQyLjgsNjguN10sWzE3NDcuOCwxMTAuMV0sWzE1MjIuOCwyNDYuNl0sWzE1MjAuOSwyNTAuNF0sWzE1NTguNiwzMTkuMV0sWzE4ODEuNCwxNDMuMV0sWzE4ODEuNCwxMzguNF1dfSx7ImlkIjoiSDExIiwibmFtZSI6IlJILTExIiwicG9seSI6W1sxOTM0LjEsNTYuNV0sWzE5MTYuMiwxMzQuNl0sWzIwNjAuMiwxNjkuNF0sWzIwODkuNCw5NC4xXV19LHsiaWQiOiJIMTIiLCJuYW1lIjoiUkgtMTIiLCJwb2x5IjpbWzIzNDkuMiwxNDAxLjRdLFsyMTc1LjEsMTQ0MS45XSxbMjM0MC43LDIxNDcuOF0sWzI1MTMuOSwyMTA3LjNdXX0seyJpZCI6IkgxMyIsIm5hbWUiOiJSSC0xMyIsInBvbHkiOltbMjU0Mi4xLDIyMDguOV0sWzIyNzUuOCwyMzY5LjldLFsyMzE3LjIsMjQzOC42XSxbMjU4My41LDIyNzguNl1dfSx7ImlkIjoiSDE0IiwibmFtZSI6IlJILTE0IiwicG9seSI6W1syMjI3LjgsMjM5OC4xXSxbMTk2MS40LDI1NTkuMV0sWzIwMDIuOCwyNjI3LjhdLFsyMjcwLjEsMjQ2Ni44XV19LHsiaWQiOiJIMTUiLCJuYW1lIjoiUkgtMTUiLCJwb2x5IjpbWzE5MTQuNCwyNTg3LjNdLFsxNjQ4LDI3NDguMl0sWzE2ODkuNCwyODE2LjldLFsxOTU2LjcsMjY1Nl1dfSx7ImlkIjoiSDE2IiwibmFtZSI6IlJILTE2IiwicG9seSI6W1sxMjM4LjYsMjY4MS40XSxbMTI0MS40LDI2ODYuMV0sWzE0MjEuMiwyNzU1LjhdLFsxNDU2LDI2NjcuM10sWzE0NjAuNywyNjY1LjRdLFsxNTIzLjgsMjY5MC44XSxbMTU1My45LDI2MTUuNV0sWzEzMDMuNSwyNTE3LjZdXX0seyJpZCI6IkgxNyIsIm5hbWUiOiJSSC0xNyIsInBvbHkiOltbMTAxMS44LDI0MDIuOF0sWzk4NC41LDI0NjkuNl0sWzk4OS4yLDI0NzkuMV0sWzExMTQuNCwyNTMwLjhdLFsxMDc5LjUsMjYyMi4xXSxbMTE5NS4zLDI2NjcuM10sWzEyNjEuMiwyNTAwLjddXX0seyJpZCI6IkgxOCIsIm5hbWUiOiJSSC0xOCIsInBvbHkiOltbNzgwLjIsMjAxMi4yXSxbNzUyLDIwODAuOV0sWzc1MiwyMDg3LjVdLFs4ODIuOCwyMTQwLjJdLFs4NDgsMjIzMS41XSxbMTA5Ny40LDIzMzAuNF0sWzExNjMuMywyMTYzLjhdXX0seyJpZCI6IkgxOSIsIm5hbWUiOiJSSC0xOSIsInBvbHkiOltbMTIwNi42LDIxNzkuOF0sWzExMzkuOCwyMzQ2LjRdLFsxMzg5LjIsMjQ0NS4yXSxbMTQ1NS4xLDIyNzguNl1dfSx7ImlkIjoiSDIwIiwibmFtZSI6IlJILTIwIiwicG9seSI6W1sxNDMyLjUsMjQ2MC4yXSxbMTcwOS4yLDI1NzAuNF0sWzE3NDYuOCwyNDc5LjFdLFsxODI0LjksMjUxMC4xXSxbMTg1NS4xLDI0MzUuOF0sWzE0OTguNCwyMjk0LjZdXX0seyJpZCI6IkgyMSIsIm5hbWUiOiJSSC0yMSIsInBvbHkiOltbMjE3Ni45LDIxNjUuNl0sWzIxNDEuMiwyMjU1LjFdLFsyMjA3LjEsMjI4MC41XSxbMjIyMi4xLDIyNjkuMl0sWzIyNDMuOCwyMjEzLjZdLFsyMjQwLDIxOTEuMV1dfSx7ImlkIjoiSDIyIiwibmFtZSI6IlJILTIyIiwicG9seSI6W1syMDY0LjksMTY4OS40XSxbMTgyOC43LDIyODhdLFsxOTk0LjQsMjM1NC44XSxbMjE4MS42LDE4ODAuNV0sWzIxNzguOCwxODcyLjldLFsyMDkyLjIsMTgzOC4xXSxbMjEzMi43LDE3MjkuOV0sWzIxMjcuMSwxNzEzLjldXX0seyJpZCI6IkgyMyIsIm5hbWUiOiJSSC0yMyIsInBvbHkiOltbMTc0Ny44LDE3MzQuNl0sWzE1NjkuOSwyMTg1LjRdLFsxNTcxLjgsMjE4OS4yXSxbMTczNS41LDIyNTMuMl0sWzE5MTQuNCwxODAwLjVdXX0seyJpZCI6IkgyNCIsIm5hbWUiOiJSSC0yNCIsInBvbHkiOltbMTQ4OC45LDE2MzIuOV0sWzEzMTAuMSwyMDg1LjZdLFsxNDc2LjcsMjE1MS41XSxbMTY1NC42LDE2OTkuOF1dfSx7ImlkIjoiSDI1IiwibmFtZSI6IlJILTI1IiwicG9seSI6W1sxOTQzLjUsMTI0MC41XSxbMTkzNi45LDEyNTAuOF0sWzE3NjMuOCwxNjkyLjJdLFsxOTI4LjUsMTc1OC4xXSxbMTkzNi45LDE3NDMuMV0sWzIxMDguMiwxMzA2LjRdXX0seyJpZCI6IkgyNiIsIm5hbWUiOiJSSC0yNiIsInBvbHkiOltbMTY4NC43LDExMzguOF0sWzE2ODEuOSwxMTM5LjhdLFsxNTA0LjksMTU4OS42XSxbMTUwNS45LDE1OTIuNV0sWzE2NjkuNiwxNjU2LjVdLFsxNjczLjQsMTY1Mi43XSxbMTg0OC41LDEyMDYuNl0sWzE4NDcuNSwxMjAyLjhdXX0seyJpZCI6IkgyNyIsIm5hbWUiOiJSSC0yNyIsInBvbHkiOltbMTg3Mi45LDg4Ny41XSxbMTgwOC45LDEwNTAuNF0sWzE4MTAuOCwxMDU0LjFdLFsyMTkyLjksMTIwMi44XSxbMjIyMS4yLDExMjguNV0sWzIwODkuNCwxMDc1LjhdLFsyMTIzLjMsOTgzLjVdLFsxODc3LjYsODg2LjZdXX0seyJpZCI6IkgyOCIsIm5hbWUiOiJSSC0yOCIsInBvbHkiOltbMTU4Mi4xLDc3MC44XSxbMTUxNi4yLDkzNy40XSxbMTc2NS42LDEwMzYuMl0sWzE4MzEuNSw4NjkuNl1dfSx7ImlkIjoiSDI5IiwibmFtZSI6IlJILTI5IiwicG9seSI6W1sxNzkwLjEsNTUzLjRdLFsxNzI0LjIsNzIwXSxbMTk3My42LDgxOC44XSxbMjAwMi44LDc0My41XSxbMTg3MS4xLDY5MC44XSxbMTkwNS45LDU5OS41XV19LHsiaWQiOiJIMzAiLCJuYW1lIjoiUkgtMzAiLCJwb2x5IjpbWzE0NTkuOCw1MzIuN10sWzE0MzIuNSw2MDEuNF0sWzE0MzMuNCw2MDcuMV0sWzE2ODAsNzA0XSxbMTc0Ni44LDUzOC40XSxbMTU2NS4yLDQ2NC45XSxbMTUyNy41LDU1NS4zXSxbMTQ2NS40LDUzMS44XV19LHsiaWQiOiJIMzEiLCJuYW1lIjoiUkgtMzEiLCJwb2x5IjpbWzExNDUuNCw3MDYuOF0sWzExMTguMSw3NzUuNV0sWzExMTguMSw3ODIuMV0sWzE0NzIuOSw5MjEuNF0sWzE1MzguOCw3NTYuN10sWzE1MzAuNCw3NTAuMV0sWzEyNjQsNjQ1LjZdLFsxMjI2LjQsNzM2XV19LHsiaWQiOiJIMzIiLCJuYW1lIjoiUkgtMzIiLCJwb2x5IjpbWzEyNjAuMiw5NzIuMl0sWzEwODIuNCwxNDIzLjFdLFsxMDg3LjEsMTQyNy44XSxbMTI0OCwxNDkwLjhdLFsxNDI1LjksMTA0MF0sWzE0MjQsMTAzNi4yXV19LHsiaWQiOiJIMzMiLCJuYW1lIjoiUkgtMzMiLCJwb2x5IjpbWzEwNjcuMywxNDY3LjNdLFsxMDUyLjIsMTQ5OS4zXSxbODg3LjUsMTkxOS4xXSxbMTA1Mi4yLDE5ODQuOV0sWzEwNTYsMTk4Mi4xXSxbMTIzMiwxNTM0LjFdLFsxMjI4LjIsMTUzMC40XV19LHsiaWQiOiJIMzQiLCJuYW1lIjoiUkgtMzQiLCJwb2x5IjpbWzgwOC41LDEzNjUuNl0sWzgwMi44LDEzNzMuMl0sWzYyOC43LDE4MTYuNV0sWzc5My40LDE4ODMuM10sWzgxMC40LDE4NDYuNl0sWzk3My4yLDE0MzEuNV1dfSx7ImlkIjoiSDM1IiwibmFtZSI6IlJILTM1IiwicG9seSI6W1sxMDAxLjQsODcwLjZdLFs4MjIuNiwxMzIzLjNdLFs5ODkuMiwxMzg5LjJdLFsxMTY3LjEsOTM3LjRdXX0seyJpZCI6IkgzNiIsIm5hbWUiOiJSSC0zNiIsInBvbHkiOltbNzg5LjYsOTIyLjRdLFs3ODUuOSw5MjUuMl0sWzc0OC4yLDEwMTkuM10sWzY1OS44LDk4NS40XSxbNjU2LDk4Ny4zXSxbNTU5LjEsMTIzMi45XSxbNTYzLjgsMTIzNy42XSxbNjQ3LjUsMTI2OS42XSxbNjQ5LjQsMTI4MC45XSxbNzE5LjEsMTMwOC4yXSxbNzIzLjgsMTMwNS40XSxbODYyLjEsOTUzLjRdLFs4NTcuNCw5NDguN11dfSx7ImlkIjoiSDM3IiwibmFtZSI6IlJILTM3IiwicG9seSI6W1s1MzkuMywxMjg1LjZdLFs0NDAuNSwxNTM1LjFdLFs1MzEuOCwxNTcyLjddLFs0OTcuOSwxNjYwLjJdLFs1NzIuMiwxNjg5LjRdLFs3MDIuMSwxMzU5LjFdLFs2MTEuOCwxMzIyLjRdLFs2MTIuNywxMzEzLjldXX0seyJpZCI6IkgzOCIsIm5hbWUiOiJSSC0zOCIsInBvbHkiOltbNDAwLDExNTMuOV0sWzM5Ni4yLDExNTYuN10sWzMxNS4zLDEzNjIuOF0sWzM4Ny44LDEzOTIuOV0sWzM5MS41LDEzOTAuMV0sWzQ3Mi41LDExODRdXX1dLCJhY3RzIjpbeyJpZCI6ImEzIiwibmFtZSI6IldhdGVyIHRhbmsgaW5zdGFsbGF0aW9uIiwib24iOnRydWUsInN0Ijp7IkgxNiI6MSwiSDEiOjB9fSx7ImlkIjoiYTQiLCJuYW1lIjoiV2F0ZXIgdGFuayBjb25uZWN0aW9uIiwib24iOnRydWUsInN0Ijp7fX0seyJpZCI6ImEyIiwibmFtZSI6IlRpZSBiZWFtIHdvcmtzIiwib24iOnRydWUsInN0Ijp7fX0seyJpZCI6ImExIiwibmFtZSI6IlVuZGVyZ3JvdW5kIHdvcmtzIiwib24iOnRydWUsInN0Ijp7fX0seyJpZCI6ImE1IiwibmFtZSI6IjFGIHNsYWIiLCJvbiI6dHJ1ZSwic3QiOnt9fSx7ImlkIjoiYTYiLCJuYW1lIjoiMkYgc2xhYiIsIm9uIjp0cnVlLCJzdCI6e319LHsiaWQiOiJhNyIsIm5hbWUiOiJSRiBzbGFiIiwib24iOnRydWUsInN0Ijp7fX0seyJpZCI6ImE4IiwibmFtZSI6IjFzdCBGaXgiLCJvbiI6dHJ1ZSwic3QiOnt9fSx7ImlkIjoiYTkiLCJuYW1lIjoiUmlzZXIgV29ya3MgKFdTK0RSK0hWQUMpIiwib24iOnRydWUsInN0Ijp7IkgzMiI6Mn0sInN1YiI6eyJ3cyI6eyJIMzIiOjJ9LCJkciI6eyJIMzIiOjJ9LCJoZCI6eyJIMzIiOjJ9LCJoYyI6eyJIMzIiOjJ9fX0seyJpZCI6ImExMCIsIm5hbWUiOiJEUiBIL0wiLCJvbiI6dHJ1ZSwic3QiOnt9fSx7ImlkIjoiYTExIiwibmFtZSI6IldTIEgvTCIsIm9uIjp0cnVlLCJzdCI6e319LHsiaWQiOiJhMTIiLCJuYW1lIjoiSFZBQyBIL0wiLCJvbiI6dHJ1ZSwic3QiOnt9fSx7ImlkIjoiYTEzIiwibmFtZSI6IkZsb29yIFBpcGluZyBXb3JrcyAtIEVMIiwib24iOnRydWUsInN0Ijp7fX0seyJpZCI6ImExNCIsIm5hbWUiOiJSb29mIENvbWJvIENsZWFyYW5jZSIsIm9uIjp0cnVlLCJzdCI6e319LHsiaWQiOiJhMTUiLCJuYW1lIjoiRXh0ZXJuYWwgV29ya3MiLCJvbiI6dHJ1ZSwic3QiOnt9fSx7ImlkIjoiYTI3IiwibmFtZSI6IkNBVDYgV2lyaW5nIiwib24iOnRydWUsInN0Ijp7fX0seyJpZCI6ImExNiIsIm5hbWUiOiJXaXJpbmciLCJvbiI6dHJ1ZSwic3QiOnt9fSx7ImlkIjoiYTE3IiwibmFtZSI6IkFybW91ciBDYWJsZSBQdWxsaW5nIiwib24iOnRydWUsInN0Ijp7fX0seyJpZCI6ImExOCIsIm5hbWUiOiJTd2l0Y2hnZWFyIiwib24iOnRydWUsInN0Ijp7fX0seyJpZCI6ImExOSIsIm5hbWUiOiJEQiBEcmVzc2luZyIsIm9uIjp0cnVlLCJzdCI6e319LHsiaWQiOiJhMjAiLCJuYW1lIjoiMTJVIERyZXNzaW5nIiwib24iOmZhbHNlLCJzdCI6e319LHsiaWQiOiJhMjgiLCJuYW1lIjoiU3dpdGNoIFNvY2tldCBJbnN0YWxsYXRpb24iLCJvbiI6ZmFsc2UsInN0Ijp7fX0seyJpZCI6ImEyMSIsIm5hbWUiOiJMaWdodCBJbnN0YWxsYXRpb24iLCJvbiI6ZmFsc2UsInN0Ijp7fX0seyJpZCI6ImEyMiIsIm5hbWUiOiJTYW5pdGFyeXdhcmUgSW5zdGFsbGF0aW9uIiwib24iOmZhbHNlLCJzdCI6e319LHsiaWQiOiJhMjMiLCJuYW1lIjoiU29sYXIgV2F0ZXIgSGVhdGVyIEluc3RhbGxhdGlvbiIsIm9uIjpmYWxzZSwic3QiOnt9fSx7ImlkIjoiYTI0IiwibmFtZSI6IkFDIE1hY2hpbmUgSW5zdGFsbGF0aW9uIiwib24iOmZhbHNlLCJzdCI6e319LHsiaWQiOiJhMjUiLCJuYW1lIjoiSXNvbGF0b3IgSW5zdGFsbGF0aW9uIiwib24iOmZhbHNlLCJzdCI6e319LHsiaWQiOiJhMjYiLCJuYW1lIjoiQm9vc3RlciBQdW1wIEluc3RhbGxhdGlvbiIsIm9uIjpmYWxzZSwic3QiOnt9fSx7ImlkIjoiYTI5IiwibmFtZSI6IkVhcnRoaW5nLCBUJkMiLCJvbiI6ZmFsc2UsInN0Ijp7fX1dLCJ2aWxsYXMiOnsiSDEiOjE2LCJIMiI6MTYsIkgzIjoxNiwiSDQiOjE2LCJINSI6MTQsIkg2IjoxNCwiSDciOjE0LCJIOCI6MTQsIkg5IjoxNCwiSDEwIjo4LCJIMTEiOjQsIkgxMiI6NDQsIkgxMyI6MTQsIkgxNCI6MTQsIkgxNSI6MTQsIkgxNiI6MTQsIkgxNyI6MTIsIkgxOCI6MjgsIkgxOSI6MjQsIkgyMCI6MjgsIkgyMSI6NCwiSDIyIjozNiwiSDIzIjo0NCwiSDI0Ijo0NCwiSDI1Ijo0NCwiSDI2Ijo0NCwiSDI3IjoyOCwiSDI4IjoyNCwiSDI5IjoxMiwiSDMwIjoxNCwiSDMxIjoyOCwiSDMyIjo0NCwiSDMzIjo0NCwiSDM0Ijo0NCwiSDM1Ijo0NCwiSDM2IjoyOCwiSDM3IjoyOCwiSDM4IjoxMH0sInVwZGF0ZWQiOjE3OTQ1NzM2MjI5NjAsImFjdHMyNiI6MSwidnR5cGVzIjpbeyJpZCI6InZtdzBsZnA2cTYzIiwibmFtZSI6IjNCUiIsImNvbG9yIjoiIzJmN2RlMSIsInRhbmsiOnsiNTAwIjoxfX0seyJpZCI6InZtdzBsZndkbzYiLCJuYW1lIjoiNEJSIiwiY29sb3IiOiIjZWNhZTA0IiwidGFuayI6eyI2MDAiOjF9fSx7ImlkIjoidm13MGxnNXlnNDAiLCJuYW1lIjoiNUJSIiwiY29sb3IiOiIjMzhiOTA5IiwidGFuayI6eyI4MDAiOjF9fV0sInZtaXgiOnsiSDEiOnsidm13MGxmcDZxNjMiOjE2fSwiSDIiOnsidm13MGxmcDZxNjMiOjE2fSwiSDMiOnsidm13MGxmcDZxNjMiOjE2fSwiSDQiOnsidm13MGxmcDZxNjMiOjE2fSwiSDUiOnsidm13MGxmcDZxNjMiOjE0fSwiSDYiOnsidm13MGxmcDZxNjMiOjE0fSwiSDciOnsidm13MGxmcDZxNjMiOjE0fSwiSDgiOnsidm13MGxmcDZxNjMiOjE0fSwiSDkiOnsidm13MGxmcDZxNjMiOjE0fSwiSDEwIjp7InZtdzBsZzV5ZzQwIjo4fSwiSDExIjp7InZtdzBsZzV5ZzQwIjo0fSwiSDEyIjp7InZtdzBsZzV5ZzQwIjo0NH0sIkgxMyI6eyJ2bXcwbGZwNnE2MyI6MTR9LCJIMTQiOnsidm13MGxmcDZxNjMiOjE0fSwiSDE1Ijp7InZtdzBsZnA2cTYzIjoxNH0sIkgxNiI6eyJ2bXcwbGZ3ZG82IjoxNH0sIkgxNyI6eyJ2bXcwbGZ3ZG82IjoxMn0sIkgxOCI6eyJ2bXcwbGZwNnE2MyI6Mjh9LCJIMTkiOnsidm13MGxmcDZxNjMiOjI0fSwiSDIwIjp7InZtdzBsZnA2cTYzIjoyOH0sIkgyMSI6eyJ2bXcwbGZ3ZG82Ijo0fSwiSDIyIjp7InZtdzBsZzV5ZzQwIjozNn0sIkgyMyI6eyJ2bXcwbGZwNnE2MyI6NDR9LCJIMjQiOnsidm13MGxmcDZxNjMiOjQ0fSwiSDI1Ijp7InZtdzBsZnA2cTYzIjo0NH0sIkgyNiI6eyJ2bXcwbGZwNnE2MyI6NDR9LCJIMjciOnsidm13MGxmcDZxNjMiOjI4fSwiSDI4Ijp7InZtdzBsZnA2cTYzIjoyNH0sIkgyOSI6eyJ2bXcwbGZ3ZG82IjoxMn0sIkgzMCI6eyJ2bXcwbGZ3ZG82IjoxNH0sIkgzMSI6eyJ2bXcwbGZwNnE2MyI6Mjh9LCJIMzIiOnsidm13MGxmcDZxNjMiOjQ0fSwiSDMzIjp7InZtdzBsZnA2cTYzIjo0NH0sIkgzNCI6eyJ2bXcwbGZwNnE2MyI6NDR9LCJIMzUiOnsidm13MGxmcDZxNjMiOjQ0fSwiSDM2Ijp7InZtdzBsZnA2cTYzIjoyOH0sIkgzNyI6eyJ2bXcwbGZwNnE2MyI6Mjh9LCJIMzgiOnsidm13MGxmd2RvNiI6MTB9fSwicmhtaXgxIjoxLCJhY3RzMjciOjEsImFjdHMyOCI6MSwic25hcHYiOjIsIm1hdCI6eyJpcHQiOnsiYTUiOnsiSDEwIjoyNDMyMn0sImE2Ijp7IkgxMCI6MjQzMjJ9LCJhOSI6eyJIMTAiOjI0MzIyfSwiYTMiOnsiSDMyIjoyNDMyMiwiSDMzIjoyNDMyMiwiSDM0IjoyNDMyMiwiSDE2IjoyNDMyMiwiSDE3IjoyNDMyMiwiSDIwIjoyNDMyMiwiSDM1IjoyNDMyMiwiSDM2IjoyNDMyMiwiSDM3IjoyNDMyMiwiSDE5IjoyNDMyMiwiSDEiOjI0MzIyLCJIMiI6MjQzMjIsIkgzIjoyNDMyMiwiSDQiOjI0MzIyLCJINSI6MjQzMjIsIkg2IjoyNDMyMiwiSDgiOjI0MzIyLCJIOSI6MjQzMjIsIkgxMCI6MjQzMjIsIkgxMSI6MjQzMjIsIkgxOCI6MjQzMjIsIkgzOCI6MjQzMjIsIkgyNyI6MjQzMjIsIkgyOCI6MjQzMjIsIkgyOSI6MjQzMjIsIkgzMCI6MjQzMjIsIkgzMSI6MjQzMjJ9LCJhMSI6eyJIMTAiOjI0MzIyfX0sIm1hdCI6eyJhNS1wbCI6e30sImEzIjp7IkgxNiI6MiwiSDE3Ijo0LCJIMjAiOjQsIkgxIjo1LCJIMiI6NSwiSDMiOjUsIkgxNCI6NSwiSDE1Ijo1LCJIMTkiOjUsIkgzMiI6NSwiSDMzIjo1LCJIMzQiOjUsIkgzNSI6NSwiSDM3Ijo1LCJIMzYiOjV9fX0sIm1hdEVQIjoxLCJtYXRQSSI6MSwib3JkMSI6MSwiY20iOlt7ImlkIjoiY213ZXlwZ2JhMCIsInRpdGxlIjoiUHJvZ3Jlc3MgbWFwIDEiLCJwYW5lbHMiOlt7InRpdGxlIjoiUHJvZ3Jlc3Mgc3RhdHVzIiwibGVnIjpbeyJpZCI6Imxtd2V5cGdiYjEiLCJsYWJlbCI6IkNvbXBsZXRlZCIsImNvbG9yIjoiIzJlOWU1YiJ9LHsiaWQiOiJsbXdleXBnYmIyIiwibGFiZWwiOiJPbmdvaW5nIiwiY29sb3IiOiIjZGM5YjBkIn0seyJpZCI6Imxtd2V5cGdiYjMiLCJsYWJlbCI6Ik5vdCBzdGFydGVkIiwiY29sb3IiOiIjYzljZGUwIn1dLCJjZWxscyI6e319XX1dLCJpbWciOm51bGx9XX0="};
+let PM_CACHE = {};
+// MEP IPT Progress: a separate earned-value page, embedded as it was supplied (base64). It keeps its own data in this browser.
+const IPT_APP_B64 = '';
+let IPT_BASE = null;
+// Each project of this app gets its own copy of the tool's data, titled with the project name.
+// The tool's Projects card is hidden: the project list is this app's own.
+function iptHtml(p, first){
+  if (IPT_BASE === null) {
+    const bin = atob(IPT_APP_B64);
+    IPT_BASE = new TextDecoder('utf-8').decode(Uint8Array.from(bin, c => c.charCodeAt(0)));
+  }
+  // The tool's data is scoped per app project. The first project keeps the original storage keys,
+  // so data entered before this version is still there.
+  const js = v => JSON.stringify(v).replace(/</g, '\\u003c');
+  const boot = `<script>const IPT_ID=${js(p.id)};const IPT_NAME=${js(p.name)};const IPT_LEGACY=${first ? 'true' : 'false'};<\/script>\n<script>`;
+  let out = IPT_BASE
+    .replace('<script>\nconst APP_VERSION', () => boot + '\nconst APP_VERSION')
+    .replace("const STORE_KEY=KEY_BASE;", () => "const STORE_KEY=IPT_LEGACY?KEY_BASE:KEY_BASE+':'+IPT_ID;")
+    .replace("const MULTI_KEY='mep-ipt-projects-v3';", () => "const MULTI_KEY=IPT_LEGACY?'mep-ipt-projects-v3':'mep-ipt-projects-v3:'+IPT_ID;")
+    .replace('</style>', () => '#projectsCard{display:none !important}</style>');
+  // Wherever the tool shows its project name, show the app's project name instead.
+  out = out.split('S.project||').join('IPT_NAME||S.project||');
+  return out;
+}
+function progressMapHtml(pid){
+  if (!PROGRESS_MAPS[pid]) return null;
+  if (!PM_CACHE[pid]) {
+    const bin = atob(PROGRESS_MAPS[pid]);
+    let html = new TextDecoder('utf-8').decode(Uint8Array.from(bin, c => c.charCodeAt(0)));
+    // The app has its own back button, so hide the map's "Project menu" button.
+    html = html.replace('</head>', '<style>#backHome,#suBack{display:none !important}</style></head>');
+    PM_CACHE[pid] = html;
+  }
+  return PM_CACHE[pid];
+}
+// Backup and restore of the site progress map. The map keeps its data in its own frame, so the app
+// uses the map's own Backup and Restore buttons inside that frame.
+const PM_LOCK = {tv1: 'taormina', tv2: 'taormina-02', rh1: 'reportage-hills'};
+function pmDoc(){
+  const f = document.getElementById('pmFrame');
+  try { return f && f.contentDocument && f.contentDocument.getElementById('backupBtn') ? f.contentDocument : null; } catch (e) { return null; }
+}
+function pmBackup(){
+  const doc = pmDoc();
+  if (!doc) { toast('The site progress map is still loading. Try again in a moment.', true); return; }
+  doc.getElementById('backupBtn').click();
+  toast('Backup started. The JSON file is saved to your downloads.');
+}
+// The map's PDF buttons need jsPDF. If the frame could not load its own copy, use the copy the app already loaded.
+function pmBridge(){
+  try {
+    const fw = document.getElementById('pmFrame').contentWindow;
+    if (fw && !(fw.jspdf && fw.jspdf.jsPDF) && window.jspdf) fw.jspdf = window.jspdf;
+  } catch (e) {}
+}
+// First open of a map in this browser: feed the saved progress into the map's own Restore input,
+// so the map validates and stores it exactly as a manual restore would. Runs once per map and version.
+function pmImport(pid){
+  const lock = PM_LOCK[pid];
+  if (!lock || !PM_IMPORT[pid]) return;
+  const key = 'mdr-pm-import:' + lock;
+  try { if (localStorage.getItem(key) === PM_IMPORT_VER) return; } catch (e) { return; }
+  const doc = pmDoc();
+  const inp = doc && doc.getElementById('restoreFile');
+  if (!inp) return;
+  const bin = atob(PM_IMPORT[pid]);
+  const text = new TextDecoder('utf-8').decode(Uint8Array.from(bin, c => c.charCodeAt(0)));
+  const dt = new DataTransfer();
+  dt.items.add(new File([text], 'progress-' + lock + '.json', {type: 'application/json'}));
+  inp.files = dt.files;
+  const started = Date.now();
+  inp.dispatchEvent(new Event('change'));
+  // Mark as done only if the map actually wrote the project; otherwise try again on the next open.
+  setTimeout(() => {
+    try {
+      const p = JSON.parse(localStorage.getItem('tmp-' + lock) || 'null');
+      if (p && p.updated >= started) { localStorage.setItem(key, PM_IMPORT_VER); renderProject(); }
+    } catch (e) {}
+  }, 1500);
+}
+function pmRestore(input){
+  const file = input.files && input.files[0];
+  input.value = '';
+  if (!file) return;
+  const doc = pmDoc();
+  if (!doc) { toast('The site progress map is still loading. Try again in a moment.', true); return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    let data;
+    try { data = JSON.parse(reader.result); } catch (e) { toast('That file is not a map backup. Nothing was changed.', true); return; }
+    const lock = PM_LOCK[curProj().id];
+    const ok = data && Array.isArray(data.projects) && data.projects.some(x => x && x.id === lock && typeof x.name === 'string' && Array.isArray(x.acts));
+    if (!ok) { toast('That file is not a backup of this project. Nothing was changed.', true); return; }
+    const frameInput = doc.getElementById('restoreFile');
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    frameInput.files = dt.files;
+    frameInput.dispatchEvent(new Event('change'));
+    toast('Restoring from backup...');
+    setTimeout(() => { renderProject(); toast('Backup restored. The map shows the restored data.'); }, 900);
+  };
+  reader.readAsText(file);
+}
+function dbBarHtml(){
+  if (!isAdmin()) return '';
+  return `<div class="dbbar"><span class="dbbar-lbl">Databases</span><button class="btn" data-dbnav="activity">Activity database</button><button class="btn" data-dbnav="subdb">Sub contractor database</button><button class="btn" data-dbnav="labdb">Labour supplier database</button></div>`;
+}
+function renderKeepScroll(){
+  const y = window.scrollY;
+  renderProject();
+  window.scrollTo(0, y);
+}
+function progGet(pid, k, th, blk, sid){
+  const o = (((S.prog || {})[pid] || {})[k] || {})[th];
+  return o && o[blk] ? o[blk][sid] : undefined;
+}
+function progressHtml(p, k){
+  const mains = (S.act[k] || []).filter(m => m.subs.length);
+  if (!mains.length) return '<section class="soon"><h3>No activities</h3><p>Add activities for this discipline in the Activity database.</p></section>';
+  const cols = mains.flatMap(m => m.subs.map(s => ({m, s})));
+  const lines = p.ths.flatMap(t => {
+    const out = [{th: t.th, blk: '', label: (t.blocks || []).length ? t.th + ' · whole TH' : t.th}];
+    (t.blocks || []).forEach(b => out.push({th: t.th, blk: b.name, label: '   ' + b.name}));
+    return out;
+  });
+  const top = mains.map(m => `<th colspan="${m.subs.length}" class="pg-main">${esc(actNo(k, m.id) + '  ' + m.name)}</th>`).join('');
+  const sub = cols.map(c => `<th class="pg-sub">${esc(actNo(k, c.m.id, c.s.id) + ' ' + c.s.name)}</th>`).join('');
+  const body = lines.map(l => `<tr><td class="pg-first">${esc(l.label)}</td>${cols.map(c => {
+    const v = progGet(p.id, k, l.th, l.blk, c.s.id);
+    return `<td><div class="pg-pct"><input type="number" class="inp num pg-in" min="0" max="100" step="1" data-pdisc="${k}" data-pth="${esc(l.th)}" data-pblk="${esc(l.blk)}" data-psid="${c.s.id}" value="${v == null ? '' : v}"></div><div class="pg-left">${v == null ? 'Left 100%' : 'Left ' + (100 - v) + '%'}</div></td>`;
+  }).join('')}</tr>`).join('');
+  return `<div class="pg-outer"><button class="pg-arrow" data-pgscroll="-1" title="Move left" aria-label="Move left">‹</button><div class="pg-wrap"><table class="pg-tbl"><thead><tr><th class="pg-first" rowspan="2">TH / BLOCK</th>${top}</tr><tr>${sub}</tr></thead><tbody>${body || `<tr><td colspan="${cols.length + 1}">No TH in this project.</td></tr>`}</tbody></table></div><button class="pg-arrow" data-pgscroll="1" title="Move right" aria-label="Move right">›</button></div>`;
+}
+function renderProject(){
+  const p = curProj(), d = curDay();
+  const allowed = allowedSecs(p.id);
+  let sec = ui.psec || 'hub';
+  const avail = allowed.includes('report') ? [...allowed, 'progress'] : allowed;
+  if (sec !== 'hub' && !avail.includes(sec)) sec = 'hub';
+  if (sec === 'hub' && allowed.length === 1) sec = allowed[0];
+  const backTo = allowed.length > 1 && sec !== 'hub' ? '<button class="btn" data-pv="hub">← Back</button>' : '';
+  const head = `<div class="ph-top ph-compact"><button class="btn" data-pv="back">← All projects</button>${backTo}
+      <div class="ph-title"><span class="eyebrow">PROJECT · ${p.ths.length} TH · ${ptot(p)} VILLAS</span><h2 class="ph-name">${esc(p.name.toUpperCase())}</h2></div>
+    </div>${dbBarHtml()}`;
+  if (sec === 'hub') {
+    if (!allowed.length) {
+      $('#v-project').innerHTML = head + '<section class="soon"><h3>No options open</h3><p>You have no options open in this project. Ask the admin to give you access.</p></section>';
+      return;
+    }
+    const card = (sec, col, tint, icon, title, sub, tag) => `<button class="hub-card" data-psec="${sec}" style="--c:${col};--t:${tint}">
+        <span class="hub-ico">${icon}</span>
+        <span class="hub-txt"><em>${tag}</em><b>${title}</b><span>${sub}</span></span>
+        <span class="hub-go">Open →</span>
+      </button>`;
+    const I = {
+      team: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.4 3.2-5.5 6.5-5.5s5.9 2.1 6.5 5.5"/><circle cx="17" cy="9" r="2.6"/><path d="M16.5 14.6c2.5.2 4.4 2.1 5 4.9"/></svg>',
+      map: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6.5v13.5L9 17.5l6 2.5 6-2.5V4l-6 2.5z"/><path d="M9 4v13.5M15 6.5V20"/></svg>',
+      chart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>'
+    };
+    $('#v-project').innerHTML = head + `<div class="hub">
+      ${allowed.includes('report') ? card('report', '#1d4ed8', '#dbeafe', I.team, 'Daily Manpower Report', 'Daily manpower and progress by discipline, with TH, block, labour and sub contractors.', 'Daily') : ''}
+      ${allowed.includes('map') ? card('map', '#0f766e', '#ccfbf1', I.map, 'Site Progress Map', 'Progress shown on the site map.', 'Site') : ''}
+      ${allowed.includes('report') ? card('progress', '#7c3aed', '#ede9fe', I.chart, 'Progress by Activity', 'Done and left % for each TH, block and activity.', 'Progress') : ''}
+      ${allowed.includes('summary') ? card('summary', '#b45309', '#fef3c7', I.chart, 'Summary, Overtime &amp; BOQ', 'Summary, overtime and bill of quantities.', 'Reports') : ''}
+      ${allowed.includes('ipt') ? card('ipt', '#0f2b46', '#dbeafe', I.chart, 'MEP IPT Progress', 'Earned value, planned and actual cost for the MEP IPT.', 'IPT') : ''}
+    </div>`;
+    return;
+  }
+  if (sec === 'ipt') {
+    const backTo = allowed.length > 1 ? '<button class="btn" data-pv="hub">← Back</button>' : '';
+    $('#v-project').innerHTML = `<div class="ph-top ph-compact"><button class="btn" data-pv="back">← All projects</button>${backTo}
+        <div class="ph-title"><span class="eyebrow">MEP IPT PROGRESS · ${p.ths.length} TH</span><h2 class="ph-name">${esc(p.name.toUpperCase())}</h2></div>
+      </div>${dbBarHtml()}
+      <section class="pm-wrap"><iframe class="pm-frame" id="iptFrame" title="MEP IPT Progress"></iframe></section>`;
+    $('#iptFrame').srcdoc = iptHtml(p, (S.projects[0] || {}).id === p.id);
+    return;
+  }
+  if (sec === 'progress') {
+    const pk = DISCS.some(D => D.k === ui.disc) ? ui.disc : 'EL';
+    const tabs = DISCS.map(D => `<button class="wd ${pk === D.k ? 'on' : ''}" style="--c:${D.col}" data-ptab="${D.k}">${D.n}<b>${D.letter}</b></button>`).join('');
+    $('#v-project').innerHTML = `<div class="ph-top ph-compact"><button class="btn" data-pv="back">← All projects</button><button class="btn" data-psec="report">← Back</button>
+        <div class="ph-title"><span class="eyebrow">PROGRESS · ${p.ths.length} TH</span><h2 class="ph-name">${esc(p.name.toUpperCase())}</h2></div>
+      </div>${dbBarHtml()}
+      <div class="wd-tabs">${tabs}</div>
+      <p class="hint">% done for each TH, block and activity. The daily report updates it, and you can change it here. Left is the % still open.</p>
+      ${progressHtml(p, pk)}`;
+    return;
+  }
+  if (sec === 'map' && progressMapHtml(p.id)) {
+    const backBtn = allowed.length === 1 ? '' : '<button class="btn" data-pv="hub">← Back</button>';
+    $('#v-project').innerHTML = `<div class="ph-top ph-compact pm-bar">
+        <button class="btn" data-pv="back">← All projects</button>${backBtn}
+        <div class="ph-title"><span class="eyebrow">${p.ths.length} TH · ${ptot(p)} VILLAS</span><h2 class="ph-name">${esc(p.name.toUpperCase())}</h2></div>
+        <span class="pm-spacer"></span><button class="btn pm-backup" data-pm="backup">Backup (JSON)</button><button class="btn" data-pm="restore">Restore from backup</button><input type="file" id="pmFile" accept="application/json,.json" hidden>
+      </div>${dbBarHtml()}
+      <section class="pm-wrap"><iframe class="pm-frame" id="pmFrame" title="${esc(p.name)} site progress map"></iframe></section>`;
+    $('#pmFrame').srcdoc = progressMapHtml(p.id);
+    $('#pmFrame').addEventListener('load', () => { pmBridge(); pmImport(p.id); });
+    return;
+  }
+  if (sec === 'map' || sec === 'summary') {
+    const t = sec === 'map' ? 'Site Progress Map' : 'Summary, Overtime & BOQ';
+    $('#v-project').innerHTML = head + `
+      <section class="soon"><h3>${t}</h3><p>This section is ready for its code. It will be filled in when the code is uploaded.</p></section>`;
+    return;
+  }
+  const tabs = DISCS.map(D => `<button class="wd ${ui.disc === D.k ? 'on' : ''}" style="--c:${D.col}" data-tab="${D.k}">${D.n}<b>${D.letter}</b></button>`).join('')
+    + `<button class="wd ${ui.disc === 'SUB' ? 'on' : ''}" style="--c:#0f766e" data-tab="SUB">Sub contractors<b>${(d.subs || []).length}</b></button>`;
+  $('#v-project').innerHTML = head + `
+    
+    <div class="daybar">
+      <label class="lbl">Report date<input type="date" class="inp" id="rDate" value="${ui.date}"></label>
+      <label class="lbl">Working hours<input class="inp" id="rHours" value="${esc(d.hours || '')}" placeholder="e.g. 10 h" style="width:120px"></label>
+      <div class="exp"><button class="btn" data-pv="import-md" title="Import a foreman's Markdown report">Import .md report</button><input type="file" id="mdImport" accept=".md,text/markdown,text/plain" hidden><button class="btn" data-psec="progress">Progress</button><button class="btn p" data-pv="pdf">Download PDF</button><button class="btn" data-pv="xlsx">Download Excel</button></div>
+    </div>
+    <div class="wd-tabs">${tabs}</div>
+    <div id="rBody"></div>`;
+  $('#rBody').innerHTML = ui.disc === 'SUB' ? subSheetHtml(p, d) : discHtml(p, d, ui.disc);
+}
+function thOptsHtml(p, sel){
+  let h = '<option value="">— TH —</option>' + p.ths.map(t => `<option value="${esc(t.th)}" ${t.th === sel ? 'selected' : ''}>${esc(t.th)}</option>`).join('');
+  if (sel && !p.ths.some(t => t.th === sel)) h += `<option value="${esc(sel)}" selected>${esc(sel)} (removed)</option>`;
+  return h;
+}
+function blockOptsHtml(p, th, sel){
+  const t = p.ths.find(x => x.th === th);
+  if (!t || !(t.blocks || []).length) return '<option value="">—</option>';
+  return '<option value="">Full TH</option>' + t.blocks.map(b => `<option value="${esc(b.name)}" ${b.name === sel ? 'selected' : ''}>${esc(b.name)}</option>`).join('');
+}
+function discHtml(p, d, k){
+  const sups = d[k].lsup || [];   // labour suppliers added to this discipline today: one column pair each
+  const stot = supTotals(d, k);
+  const D = DISC_BY[k], groups = discGroups(d, k), rows = d[k].rows;
+  const lab = labSum(d, k);
+  const body = groups.map(g => g.rows.map((v, i) => {
+    const r = v.r, first = i === 0;
+    const blkDis = (p.ths.find(t => t.th === r.th) || {blocks: []}).blocks.length ? '' : 'disabled';
+    const firstOfSub = i === 0 || g.rows[i - 1].r.sid !== r.sid;
+    return `<tr data-rid="${r.id}" class="${first ? 'gfirst' : ''}${v.orphan ? ' orph' : ''}${r.th && !isNum(r.pct) ? ' bad-row' : ''}">
+      <td class="gname" style="--tint:${D.tint}">${first ? (actNo(k, g.mid) ? `<span class="no">${actNo(k, g.mid)}</span>` : '') + esc(g.name) : ''}</td>
+      <td class="sname">${actNo(k, g.mid, r.sid) ? `<span class="no">${actNo(k, g.mid, r.sid)}</span>` : ''}${esc(v.subName)}</td>
+      <td class="n">${wTxt(v.w)}</td>
+      <td><select class="inp" data-f="th">${thOptsHtml(p, r.th)}</select></td>
+      <td><select class="inp" data-f="block" ${blkDis}>${blockOptsHtml(p, r.th, r.block)}</select></td>
+      <td class="n"><input class="inp num" type="number" min="0" max="100" step="1" data-f="pct" value="${isNum(r.pct) ? r.pct : ''}"></td>
+      <td class="n mainpct">${v.showMain ? `<b data-mp="${g.mid}|${v.scope}">${v.mainPct != null ? pctTxt(v.mainPct) : ''}</b>` : ''}</td>
+      ${LAB_MGC.map(x => `<td class="n"><input class="inp num" type="number" min="0" data-f="${x}" value="${(r.lab || {})[x] || ''}"></td>`).join('')}
+      ${sups.map(s => LAB_SUP.map(x => `<td class="n"><input class="inp num" type="number" min="0" data-f="sup" data-sid="${s.id}" data-x="${x}" value="${((r.sup || {})[s.id] || {})[x] || ''}"></td>`).join('')).join('')}
+      <td><input class="inp rem" data-f="rem" value="${esc(r.rem || '')}" placeholder="Remarks"></td>
+      <td class="c" style="white-space:nowrap"><button class="x plus addth" data-act="addth" title="Add another TH line for this sub activity">+TH</button>${isBaseRow(rows, r, k) ? '' : '<button class="x" data-act="del" title="Remove this added line">×</button>'}</td>
+    </tr>`;
+  }).join('')).join('');
+  const headGroup = (lbl, cols) => `<th colspan="${cols}">${lbl}</th>`;
+  return `<section class="rep">
+    <div class="rep-head"><b>${D.n.toUpperCase()} REPORT (${D.letter})</b>
+      <div class="sumchips"><span>${filledCount(d, k)} of ${rows.length} lines reported</span>${LAB.map(x => `<span>${labelOf(D, x)} ${lab[x]}</span>`).join('')}</div>
+      <label class="lbl">Prepared by<input class="inp" data-by="${k}" value="${esc(d[k].by || '')}" placeholder="Name" style="width:220px"></label>
+    </div>
+    <div class="tbl"><table>
+      <thead>
+        <tr><th rowspan="2" class="l">Main activity</th><th rowspan="2" class="l">Sub activity</th><th rowspan="2" class="n">Weight %</th><th rowspan="2">TH</th><th rowspan="2">Block</th><th rowspan="2" class="n">% sub done</th><th rowspan="2" class="n">% main done</th>${headGroup('MGC', 3)}${sups.map(s => headGroup(`${esc(s.name)} <button class="x" data-lsup="del" data-lsid="${s.id}" title="Remove this labour supplier from the day's report">×</button>`, 2)).join('')}<th rowspan="2" class="l">Remarks</th><th rowspan="2"></th></tr>
+        <tr>${LAB_MGC.map(x => `<th class="n">${labelShort(D, x)}</th>`).join('')}${sups.map(() => `<th class="n">${LSUP_HEAD.st}</th><th class="n">${LSUP_HEAD.sh}</th>`).join('')}</tr>
+      </thead>
+      <tbody>${body || '<tr><td colspan="${12 + 2 * sups.length}" class="empty">No activities in the database for this discipline.</td></tr>'}</tbody>
+      <tfoot><tr><td colspan="7" class="l">TOTAL LABOUR</td>${LAB_MGC.map(x => `<td class="n" data-tot="${x}">${lab[x] || ''}</td>`).join('')}${sups.map(s => LAB_SUP.map(x => `<td class="n" data-supt="${s.id}|${x}">${(stot[s.id] || {})[x] || ''}</td>`).join('')).join('')}<td colspan="2"></td></tr></tfoot>
+    </table></div>
+    ${lsupHtml(d, k)}
+  </section>`;
+}
+// Labour supplier section of a discipline report: one row per labour supplier added for the day.
+function lsupHtml(d, k){
+  const D = DISC_BY[k], list = d[k].lsup || [];
+  const used = new Set(list.map(x => x.sid));
+  const opts = (S.labsup || []).filter(x => (x.discs || []).includes(k) && !used.has(x.id)).map(x => `<option value="${x.id}">${esc(x.name)}</option>`).join('');
+  return `<div class="lsup">
+    <div class="addrow"><select class="inp" id="lsupSel" style="width:280px"><option value="">${opts ? 'Choose a labour supplier' : (list.length ? 'All labour suppliers are added' : 'No labour supplier ticked for ' + esc(D.n))}</option>${opts}</select><button class="btn" data-lsup="add" ${opts ? '' : 'disabled'}>+ Add labour supplier</button><span class="muted">Adds the ${esc(D.n)} labour supplier's ${LSUP_HEAD.st} and ${LSUP_HEAD.sh} columns to the table above.</span></div>
+    ${(S.labsup || []).length ? '' : '<div class="hint">No labour suppliers in the database yet. Admin: add them in Labour supplier database.</div>'}
+  </div>`;
+}
+function labelOf(D, x){
+  const f = [...D.mgc, ...D.sup].find(a => a[0] === x); return f ? f[1] : x;
+}
+function labelShort(D, x){
+  const f = [...D.mgc, ...D.sup].find(a => a[0] === x); return f ? f[1] : x;
+}
+function refreshMain(k){
+  const d = curDay(), mp = mainPcts(d[k].rows, k);
+  document.querySelectorAll('#rBody [data-mp]').forEach(el => { const f = mp.get(el.dataset.mp); el.textContent = f == null ? '' : pctTxt(f); });
+  const lbl = document.querySelector('#rBody .sumchips span');
+  if (lbl) lbl.textContent = filledCount(d, k) + ' of ' + d[k].rows.length + ' lines reported';
+}
+function refreshTotals(k){
+  const d = curDay(), t = labSum(d, k);
+  LAB_MGC.forEach(x => { const el = document.querySelector(`#rBody [data-tot="${x}"]`); if (el) el.textContent = t[x] || ''; });
+  const stot = supTotals(d, k);
+  document.querySelectorAll('#rBody [data-supt]').forEach(el => { const [sid, x] = el.dataset.supt.split('|'); el.textContent = (stot[sid] || {})[x] || ''; });
+  document.querySelectorAll('#rBody [data-lsfoot]').forEach(el => { el.textContent = t[el.dataset.lsfoot] || ''; });
+  document.querySelectorAll('#rBody .sumchips span').forEach((s, i) => { if (i > 0) { const x = LAB[i - 1]; if (x) s.textContent = labelOf(DISC_BY[k], x) + ' ' + (t[x] || 0); } });
+}
+
+/* Subcontractor sheet */
+function subSheetHtml(p, d){
+  const subs = d.subs || [];
+  const disc = ui.subAddDisc;
+  const dbOpts = S.subs.filter(s => s.discs.includes(disc)).map(s => `<option value="${s.id}">${esc(s.name)}</option>`).join('');
+  const actNames = disc === 'LPG' ? [] : [...new Set((S.act[disc] || []).flatMap(m => m.subs.map(s => s.name)))];
+  const grand = subs.reduce((a, s) => a + (+s.man || 0), 0);
+  let body = '';
+  SUB_DISCS.forEach(SD => {
+    const items = subs.filter(x => x.disc === SD.k);
+    if (!items.length) return;
+    body += `<tr class="band" style="--c:${SD.col}"><td colspan="7">${SD.n.toUpperCase()}</td></tr>`;
+    const order = []; items.forEach(x => { if (!order.includes(x.sid)) order.push(x.sid); });
+    order.forEach(sid => {
+      const rowsS = items.filter(x => x.sid === sid);
+      const nm = (S.subs.find(s => s.id === sid) || {name: rowsS[0].sname || '(removed)'}).name;
+      body += `<tr class="subh"><td colspan="7">${esc(nm)}</td></tr>`;
+      rowsS.forEach(x => {
+        body += `<tr data-sr="${x.id}">
+          <td><input class="inp" data-sf="act" list="actList" value="${esc(x.act || '')}" placeholder="Work activity" style="width:100%"></td>
+          <td><select class="inp" data-sf="th">${thOptsHtml(p, x.th)}</select></td>
+          <td><select class="inp" data-sf="block" ${(p.ths.find(t => t.th === x.th) || {blocks: []}).blocks.length ? '' : 'disabled'}>${blockOptsHtml(p, x.th, x.block)}</select></td>
+          <td class="n"><input class="inp num" type="number" min="0" data-sf="qty" value="${x.qty || ''}"></td>
+          <td class="n"><input class="inp num" type="number" min="0" data-sf="man" value="${x.man || ''}"></td>
+          <td><input class="inp rem" data-sf="rem" value="${esc(x.rem || '')}" placeholder="Remarks"></td>
+          <td class="c"><button class="x" data-sact="del" title="Remove">×</button></td></tr>`;
+      });
+      body += `<tr class="subtot"><td colspan="3">TOTAL ${esc(nm)} MANPOWER</td><td class="n" data-qsum="${SD.k}|${sid}">${rowsS.reduce((a, x) => a + (+x.qty || 0), 0)}</td><td class="n" data-msum="${SD.k}|${sid}">${rowsS.reduce((a, x) => a + (+x.man || 0), 0)}</td><td colspan="2"></td></tr>`;
+    });
+  });
+  return `<section class="rep" style="padding:14px">
+    <div class="addbar">
+      <label class="lbl">Discipline<select class="inp" id="sbDisc">${SUB_DISCS.map(SD => `<option value="${SD.k}" ${SD.k === disc ? 'selected' : ''}>${SD.n}</option>`).join('')}</select></label>
+      <label class="lbl">Subcontractor<select class="inp" id="sbSub" style="min-width:260px">${dbOpts || '<option value="">None tagged for this discipline</option>'}</select></label>
+      <label class="lbl">Work activity<input class="inp" id="sbAct" list="actList" style="width:220px" placeholder="Work activity"></label>
+      <label class="lbl">TH<select class="inp" id="sbTh">${thOptsHtml(p, '')}</select></label>
+      <label class="lbl">Block<select class="inp" id="sbBlock" disabled><option value="">—</option></select></label>
+      <label class="lbl">Completed villas<input class="inp num" type="number" min="0" id="sbQty" style="width:100px"></label>
+      <label class="lbl">Manpower<input class="inp num" type="number" min="0" id="sbMan" style="width:90px"></label>
+      <label class="lbl">Remarks<input class="inp" id="sbRem" style="width:180px"></label>
+      <button class="btn p" data-sb="add">+ Add</button>
+      <datalist id="actList">${actNames.map(a => `<option value="${esc(a)}">`).join('')}</datalist>
+    </div>
+    <div class="rep-head" style="margin:-14px -14px 10px"><b>SUB CONTRACTORS · ALL DISCIPLINES</b><div class="sumchips"><span id="sbGrand">Total manpower ${grand}</span></div></div>
+    <div class="tbl"><table>
+      <thead><tr><th class="l">Work activity</th><th>TH no.</th><th>Block</th><th class="n">Completed villas (qty)</th><th class="n">Manpower</th><th class="l">Remarks</th><th></th></tr></thead>
+      <tbody>${body || '<tr><td colspan="7" class="empty">No subcontractors added yet. Pick a discipline and subcontractor above, then click + Add.</td></tr>'}</tbody>
+      <tfoot><tr><td colspan="3" class="n">GRAND TOTAL</td><td class="n" data-gq="1">${subs.reduce((a, x) => a + (+x.qty || 0), 0)}</td><td class="n" data-gm="1">${grand}</td><td colspan="2"></td></tr></tfoot>
+    </table></div>
+    <div class="hint" style="margin-top:8px">Subcontractors are picked from the Sub contractor database. Manage the list there.</div>
+  </section>`;
+}
+function refreshSubTotals(){
+  const d = curDay(), subs = d.subs || [];
+  document.querySelectorAll('#v-project [data-msum]').forEach(el => {
+    const [dk, sid] = el.dataset.msum.split('|');
+    el.textContent = subs.filter(x => x.disc === dk && x.sid === sid).reduce((a, x) => a + (+x.man || 0), 0);
+  });
+  document.querySelectorAll('#v-project [data-qsum]').forEach(el => {
+    const [dk, sid] = el.dataset.qsum.split('|');
+    el.textContent = subs.filter(x => x.disc === dk && x.sid === sid).reduce((a, x) => a + (+x.qty || 0), 0);
+  });
+  const g = subs.reduce((a, x) => a + (+x.man || 0), 0), gq = subs.reduce((a, x) => a + (+x.qty || 0), 0);
+  const gm = document.querySelector('#v-project [data-gm]'); if (gm) gm.textContent = g;
+  const gq2 = document.querySelector('#v-project [data-gq]'); if (gq2) gq2.textContent = gq;
+  const sg = document.getElementById('sbGrand'); if (sg) sg.textContent = 'Total manpower ' + g;
+}
+
+/* ============ Exports (MGC report layout, same sheets as the Excel) ============ */
+function reportMeta(p, d, D){
+  return {title: 'MODUN GULF BUILDING CONTRACTING (MGC)', sub: 'MEP Department — Daily Manpower & Progress Report',
+    report: D ? `${D.n.toUpperCase()} REPORT (${D.letter})` : 'SUBCONTRACTORS (ALL DISCIPLINES)',
+    line: D ? `${D.n.toUpperCase()} — MGC & LABOUR SUPPLIERS` : 'MEP SUB CONTRACTORS DAILY WORK DETAILS',
+    date: fmtIso(ui.date), day: fmtLong(ui.date), hours: d.hours || '', by: (D ? d[D.k].by : '') || '', project: p.name.toUpperCase()};
+}
+function discLines(d, k){
+  return discGroups(d, k).map(g => ({name: g.name, rows: g.rows.map(v => ({
+    sub: v.subName, w: v.w, th: v.r.th || '', block: v.r.th ? (v.r.block || 'Full TH') : '',
+    pct: isNum(v.r.pct) ? +v.r.pct : null, mainPct: v.mainPct,
+    lab: LAB.map(x => +(v.r.lab || {})[x] || 0), sup: v.r.sup || {}, rem: v.r.rem || ''}))}));
+}
+// A line has values if it has a TH, a % done, labour or supplier counts, or a remark. Empty lines are left out of the PDF.
+function lineHasValue(r){
+  return !!r.th || r.pct != null || r.lab.some(x => +x) || Object.values(r.sup).some(v => Object.values(v).some(x => +x)) || !!r.rem;
+}
+function subLines(d){
+  return SUB_DISCS.map(SD => {
+    const items = (d.subs || []).filter(x => x.disc === SD.k);
+    const order = []; items.forEach(x => { if (!order.includes(x.sid)) order.push(x.sid); });
+    return {SD, subs: order.map(sid => {
+      const rs = items.filter(x => x.sid === sid);
+      return {name: (S.subs.find(s => s.id === sid) || {name: rs[0].sname || '(removed)'}).name, rows: rs,
+        qty: rs.reduce((a, x) => a + (+x.qty || 0), 0), man: rs.reduce((a, x) => a + (+x.man || 0), 0)};
+    }), items};
+  }).filter(x => x.items.length);
+}
+const fmtN = v => v ? v : '';
+function pdfHead(doc, meta, W){
+  doc.setTextColor(15, 42, 68); doc.setFont('helvetica', 'bold'); doc.setFontSize(13);
+  doc.text(meta.title, 10, 12);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(71, 85, 105);
+  doc.text(meta.sub, 10, 17);
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(15, 23, 42);
+  doc.text(meta.report, W - 10, 12, {align: 'right'});
+  doc.setFontSize(10); doc.text(meta.line, 10, 24);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+  doc.text('DATE: ' + meta.date + ' (' + meta.day + ')', W - 10, 24, {align: 'right'});
+  doc.text('PROJECT: ' + meta.project, 10, 29);
+  doc.text('WORKING HOURS: ' + (meta.hours || '—'), W / 2, 29, {align: 'center'});
+  doc.text('PREPARED BY: ' + (meta.by || '—'), W - 10, 29, {align: 'right'});
+}
+function exportPdf(){
+  const p = curProj(), d = curDay();
+  if (!window.jspdf) { toast('PDF library is still loading. Try again in a moment.', true); return; }
+  const {jsPDF} = window.jspdf;
+  const doc = new jsPDF({orientation: 'landscape', unit: 'mm', format: 'a4'});
+  const W = doc.internal.pageSize.getWidth();
+  DISCS.forEach((D, i) => {
+    if (i) doc.addPage('a4', 'landscape');
+    pdfHead(doc, reportMeta(p, d, D), W);
+    const groups = discLines(d, D.k).map(g => ({name: g.name, rows: g.rows.filter(lineHasValue)})).filter(g => g.rows.length), body = [], sups = d[D.k].lsup || [];
+    groups.forEach(g => g.rows.forEach((r, i2) => {
+      const row = [];
+      if (i2 === 0) row.push({content: g.name, rowSpan: g.rows.length, styles: {valign: 'middle', fontStyle: 'bold', fillColor: D.rt}});
+      row.push(r.sub, wTxt(r.w), r.th, r.block, r.pct != null ? r.pct + '%' : '', r.mainPct != null ? pctTxt(r.mainPct) : '',
+        ...r.lab.slice(0, LAB_MGC.length).map(fmtN), ...sups.flatMap(s => LAB_SUP.map(x => fmtN(((r.sup || {})[s.id] || {})[x]))), r.rem);
+      body.push(row);
+    }));
+    const tot = labSum(d, D.k), stot = supTotals(d, D.k);
+    // Each labour supplier gets its own TECHNICIAN and HELPER columns after MGC; the page width is shared between them.
+    const supW = Math.min(19, Math.max(11, 76 / (2 * Math.max(1, sups.length))));
+    const cs = {0: {cellWidth: 26, halign: 'left'}, 1: {cellWidth: 36, halign: 'left'}, 2: {cellWidth: 12}, 3: {cellWidth: 12}, 4: {cellWidth: 12},
+      5: {cellWidth: 13}, 6: {cellWidth: 13}, 7: {cellWidth: 17}, 8: {cellWidth: 17}, 9: {cellWidth: 19}};
+    sups.forEach((_, i) => { cs[10 + 2 * i] = {cellWidth: supW}; cs[11 + 2 * i] = {cellWidth: supW}; });
+    cs[10 + 2 * sups.length] = {halign: 'left'};
+    doc.autoTable({
+      startY: 33, margin: {left: 10, right: 10},
+      head: [[
+        {content: 'MAIN ACTIVITY', rowSpan: 2}, {content: 'SUB ACTIVITY', rowSpan: 2}, {content: 'WEIGHT %', rowSpan: 2},
+        {content: 'TH NO.', rowSpan: 2}, {content: 'BLOCK', rowSpan: 2}, {content: '% SUB ACTIVITY DONE', rowSpan: 2},
+        {content: '% MAIN ACTIVITY DONE', rowSpan: 2}, {content: 'MGC', colSpan: 3},
+        ...sups.map(x => ({content: x.name, colSpan: 2})),
+        {content: 'REMARKS', rowSpan: 2}],
+        [...D.mgc.map(a => a[1]), ...sups.flatMap(() => [LSUP_HEAD.st, LSUP_HEAD.sh])]],
+      body: body.length ? body : [[{content: 'No lines', colSpan: 11 + 2 * sups.length}]],
+      foot: [[{content: 'TOTAL', colSpan: 7, styles: {halign: 'right'}}, ...LAB_MGC.map(x => tot[x] || ''),
+        ...sups.flatMap(s => LAB_SUP.map(y => (stot[s.id] || {})[y] || '')), '']],
+      styles: {fontSize: 7.2, cellPadding: 0.9, valign: 'middle', halign: 'center', lineColor: [203, 213, 225], lineWidth: 0.1},
+      headStyles: {fillColor: D.rt, textColor: D.rd, fontStyle: 'bold', fontSize: 6.3, halign: 'center', cellPadding: 1.1},
+      footStyles: {fillColor: [226, 232, 240], textColor: [15, 23, 42], fontStyle: 'bold'},
+      columnStyles: cs
+    });
+  });
+  // Subcontractor sheet (4th page)
+  doc.addPage('a4', 'landscape');
+  pdfHead(doc, reportMeta(p, d, null), W);
+  const sb = [];
+  let gq = 0, gm = 0;
+  subLines(d).forEach(({SD, subs}) => {
+    const lines = [];
+    subs.forEach(s => {
+      s.rows.forEach(x => lines.push([s.name, x.act || '', x.th || '', x.th ? (x.block || 'Full TH') : '', fmtN(x.qty), fmtN(x.man), x.rem || '']));
+      gq += s.qty; gm += s.man;
+    });
+    lines.forEach((ln, i) => {
+      const row = [];
+      if (i === 0) row.push({content: SD.n.toUpperCase(), rowSpan: lines.length, styles: {valign: 'middle', fontStyle: 'bold', fillColor: [226, 232, 240]}});
+      sb.push(i === 0 ? [row[0], ...ln] : ln);
+    });
+  });
+  doc.autoTable({
+    startY: 33, margin: {left: 10, right: 10},
+    head: [['DISCIPLINE', 'SUB CONTRACTOR', 'WORK ACTIVITY', 'TH NO.', 'BLOCK', 'COMPLETED VILLAS (QTY)', 'MANPOWER', 'REMARKS']],
+    body: sb.length ? sb : [[{content: 'No subcontractors added', colSpan: 8}]],
+    foot: [[{content: 'TOTAL', colSpan: 5, styles: {halign: 'right'}}, gq || '', gm || '', '']],
+    styles: {fontSize: 8, cellPadding: 1.8, valign: 'middle', halign: 'center', lineColor: [203, 213, 225], lineWidth: 0.1},
+    headStyles: {fillColor: [15, 42, 68], textColor: 255, fontStyle: 'bold', fontSize: 7.5},
+    footStyles: {fillColor: [226, 232, 240], textColor: [15, 23, 42], fontStyle: 'bold'},
+    columnStyles: {0: {cellWidth: 26}, 1: {cellWidth: 60, halign: 'left'}, 2: {cellWidth: 54, halign: 'left'}, 3: {cellWidth: 16}, 4: {cellWidth: 18},
+      5: {cellWidth: 22}, 6: {cellWidth: 20}, 7: {halign: 'left'}}
+  });
+  doc.save(`DMR ${p.name} ${ui.date}.pdf`);
+}
+
+async function exportXlsx(){
+  const p = curProj(), d = curDay();
+  if (!window.ExcelJS) { toast('Excel library is still loading. Try again in a moment.', true); return; }
+  const wb = new ExcelJS.Workbook();
+  wb.creator = 'MGC MEP Department'; wb.created = new Date();
+  const border = {top:{style:'thin', color:{argb:'FFCBD5E1'}}, left:{style:'thin', color:{argb:'FFCBD5E1'}}, bottom:{style:'thin', color:{argb:'FFCBD5E1'}}, right:{style:'thin', color:{argb:'FFCBD5E1'}}};
+  const hexArgb = hex => 'FF' + hex.replace('#', '').toUpperCase();
+  const style = (c, o = {}) => {
+    c.border = border; c.alignment = {vertical:'middle', horizontal: o.h || 'center', wrapText: true};
+    if (o.fill) c.fill = {type:'pattern', pattern:'solid', fgColor:{argb:o.fill}};
+    c.font = {name:'Calibri', size: o.size || 9, bold: !!o.bold, color: {argb: o.color || 'FF0F172A'}};
+    if (o.fmt) c.numFmt = o.fmt;
+  };
+  // Discipline sheets
+  DISCS.forEach(D => {
+    const ws = wb.addWorksheet(D.sheet);
+    const cols = [2, 34, 40, 11, 12, 14, 13, 13, 11, 11, 11, 11, 11, 30];
+    cols.forEach((w, i) => { ws.getColumn(i + 1).width = w; });
+    const meta = reportMeta(p, d, D);
+    ws.mergeCells('B1:M1'); ws.getCell('B1').value = meta.title;
+    style(ws.getCell('B1'), {h:'left', bold:true, size:13, color:'FF0F2A44'});
+    ws.mergeCells('B2:J2'); ws.getCell('B2').value = meta.sub;
+    style(ws.getCell('B2'), {h:'left', size:9, color:'FF475569'});
+    ws.mergeCells('K2:N2'); ws.getCell('K2').value = meta.report;
+    style(ws.getCell('K2'), {h:'right', bold:true, size:11, color: hexArgb(D.dark)});
+    ws.mergeCells('B3:J3'); ws.getCell('B3').value = meta.line;
+    style(ws.getCell('B3'), {h:'left', bold:true, size:10});
+    ws.mergeCells('K3:N3'); ws.getCell('K3').value = 'DATE: ' + meta.date + ' (' + meta.day + ')';
+    style(ws.getCell('K3'), {h:'right', size:9});
+    ws.mergeCells('B4:F4'); ws.getCell('B4').value = 'PROJECT: ' + meta.project;
+    style(ws.getCell('B4'), {h:'left'});
+    ws.mergeCells('G4:I4'); ws.getCell('G4').value = 'WORKING HOURS: ' + (meta.hours || '—');
+    style(ws.getCell('G4'), {h:'center'});
+    ws.mergeCells('J4:N4'); ws.getCell('J4').value = 'PREPARED BY: ' + (meta.by || '—');
+    style(ws.getCell('J4'), {h:'right'});
+    // headers rows 5 and 6
+    const hdr = [['B','MAIN ACTIVITY'],['C','SUB ACTIVITY'],['D','WEIGHTAGE (%)'],['E','TH NO.'],['F','BLOCK'],['G','% SUB ACTIVITY DONE'],['H','% MAIN ACTIVITY DONE'],['N','REMARKS']];
+    hdr.forEach(([c, t]) => {
+      ws.mergeCells(`${c}5:${c}6`); ws.getCell(`${c}5`).value = t;
+      style(ws.getCell(`${c}5`), {fill: hexArgb(D.tint), bold: true, color: hexArgb(D.dark)});
+      style(ws.getCell(`${c}6`), {fill: hexArgb(D.tint)});
+    });
+    ws.mergeCells('I5:K5'); ws.getCell('I5').value = 'MGC';
+    style(ws.getCell('I5'), {fill: hexArgb(D.tint), bold: true, color: hexArgb(D.dark)});
+    ws.mergeCells('L5:M5'); ws.getCell('L5').value = 'LABOUR SUPPLIER';
+    style(ws.getCell('L5'), {fill: hexArgb(D.tint), bold: true, color: hexArgb(D.dark)});
+    [...D.mgc, ...D.sup].forEach((a, i) => {
+      const c = ws.getCell(6, 9 + i); c.value = a[1];
+      style(c, {fill: hexArgb(D.tint), bold: true, color: hexArgb(D.dark), size: 8});
+    });
+    ws.getRow(6).height = 26; ws.getRow(5).height = 18;
+    // body
+    let rr = 7;
+    discLines(d, D.k).forEach(g => {
+      const start = rr;
+      g.rows.forEach((r, i) => {
+        const row = ws.getRow(rr);
+        const vals = {B: i === 0 ? g.name : '', C: r.sub, D: r.w / 100, E: r.th, F: r.block, G: r.pct != null ? r.pct / 100 : null, H: r.mainPct, I: r.lab[0] || null, J: r.lab[1] || null, K: r.lab[2] || null, L: r.lab[3] || null, M: r.lab[4] || null, N: r.rem};
+        Object.entries(vals).forEach(([c, v]) => {
+          const cell = ws.getCell(c + rr); cell.value = v === '' ? null : v;
+          const fmt = (c === 'D' || c === 'G' || c === 'H') ? '0.0%' : undefined;
+          style(cell, {fill: c === 'B' ? hexArgb(D.tint) : undefined, bold: c === 'B', h: (c === 'C' || c === 'N' || c === 'B') ? 'left' : 'center', fmt});
+        });
+        rr++;
+      });
+      if (g.rows.length > 1) ws.mergeCells(`B${start}:B${rr - 1}`);
+    });
+    // totals
+    ws.mergeCells(`B${rr}:H${rr}`); ws.getCell(`B${rr}`).value = 'TOTAL LABOUR';
+    style(ws.getCell(`B${rr}`), {h:'right', bold:true, fill:'FFE2E8F0'});
+    const tot = labSum(d, D.k);
+    ['I','J','K','L','M'].forEach((c, j) => {
+      ws.getCell(c + rr).value = tot[LAB[j]] || null; style(ws.getCell(c + rr), {bold:true, fill:'FFE2E8F0'});
+    });
+    style(ws.getCell('N' + rr), {fill:'FFE2E8F0'});
+    // labour supplier block: one row per labour supplier
+    rr += 2;
+    ws.mergeCells(`B${rr}:K${rr}`); ws.getCell(`B${rr}`).value = 'LABOUR SUPPLIER';
+    style(ws.getCell(`B${rr}`), {h:'left', bold:true, fill: hexArgb(D.tint), color: hexArgb(D.dark)});
+    ws.getCell(`L${rr}`).value = D.sup[0][1]; ws.getCell(`M${rr}`).value = D.sup[1][1]; ws.getCell(`N${rr}`).value = 'REMARKS';
+    ['L','M','N'].forEach(c => style(ws.getCell(c + rr), {fill: hexArgb(D.tint), bold:true, color: hexArgb(D.dark), size:8}));
+    rr++;
+    const lsl = d[D.k].lsup || [];
+    if (!lsl.length) { ws.mergeCells(`B${rr}:N${rr}`); ws.getCell(`B${rr}`).value = 'No labour suppliers added'; style(ws.getCell(`B${rr}`), {h:'left'}); rr++; }
+    lsl.forEach(x => {
+      ws.mergeCells(`B${rr}:K${rr}`); ws.getCell(`B${rr}`).value = x.name; style(ws.getCell(`B${rr}`), {h:'left', bold:true});
+      ws.getCell(`L${rr}`).value = (x.lab || {}).st || null; ws.getCell(`M${rr}`).value = (x.lab || {}).sh || null; ws.getCell(`N${rr}`).value = x.rem || null;
+      ['L','M'].forEach(c => style(ws.getCell(c + rr), {h:'center'})); style(ws.getCell(`N${rr}`), {h:'left'});
+      rr++;
+    });
+    ws.mergeCells(`B${rr}:K${rr}`); ws.getCell(`B${rr}`).value = 'TOTAL LABOUR SUPPLIER';
+    style(ws.getCell(`B${rr}`), {h:'right', bold:true, fill:'FFE2E8F0'});
+    ws.getCell(`L${rr}`).value = tot.st || null; ws.getCell(`M${rr}`).value = tot.sh || null;
+    ['L','M','N'].forEach(c => style(ws.getCell(c + rr), {bold:true, fill:'FFE2E8F0'}));
+    ws.views = [{state:'frozen', ySplit: 6}];
+  });
+  // Subcontractor sheet
+  const sws = wb.addWorksheet('SubCont');
+  [2, 24, 36, 40, 11, 12, 14, 13, 30].forEach((w, i) => { sws.getColumn(i + 1).width = w; });
+  const sm = reportMeta(p, d, null);
+  sws.mergeCells('B1:I1'); sws.getCell('B1').value = sm.title;
+  style(sws.getCell('B1'), {h:'left', bold:true, size:13, color:'FF0F2A44'});
+  sws.mergeCells('B2:I2'); sws.getCell('B2').value = sm.sub;
+  style(sws.getCell('B2'), {h:'left', size:9, color:'FF475569'});
+  sws.mergeCells('B3:I3'); sws.getCell('B3').value = sm.line + '  ·  ' + sm.project;
+  style(sws.getCell('B3'), {h:'left', bold:true, size:10});
+  sws.mergeCells('B4:D4'); sws.getCell('B4').value = 'DATE: ' + sm.date + ' (' + sm.day + ')';
+  style(sws.getCell('B4'), {h:'left'});
+  sws.mergeCells('E4:G4'); sws.getCell('E4').value = 'WORKING HOURS: ' + (sm.hours || '—');
+  style(sws.getCell('E4'), {h:'center'});
+  sws.mergeCells('H4:I4'); sws.getCell('H4').value = 'PREPARED BY: ' + (sm.by || '—');
+  style(sws.getCell('H4'), {h:'right'});
+  const sh = ['DISCIPLINE','SUB CONTRACTOR','WORK ACTIVITY','TH NO.','BLOCK','COMPLETED VILLAS (QTY)','MANPOWER','REMARKS'];
+  sh.forEach((t, i) => { const c = sws.getCell(5, 2 + i); c.value = t; style(c, {fill:'FF0F2A44', color:'FFFFFFFF', bold:true}); });
+  sws.getRow(5).height = 26;
+  let sr = 6, gq2 = 0, gm2 = 0;
+  subLines(d).forEach(({SD, subs}) => {
+    const start = sr;
+    subs.forEach(s => {
+      s.rows.forEach(x => {
+        const vals = [SD.n.toUpperCase(), s.name, x.act || '', x.th || '', x.th ? (x.block || 'Full TH') : '', x.qty || null, x.man || null, x.rem || ''];
+        vals.forEach((v, i) => { const c = sws.getCell(sr, 2 + i); c.value = v === '' ? null : v; style(c, {h: i === 1 || i === 2 || i === 7 ? 'left' : 'center', bold: i === 0}); });
+        sr++;
+      });
+      ['TOTAL ' + s.name + ' MANPOWER'].forEach(t => {
+        sws.mergeCells(`B${sr}:F${sr}`); sws.getCell(`B${sr}`).value = t;
+        style(sws.getCell(`B${sr}`), {h:'right', bold:true, fill:'FFF1F5F9'});
+        sws.getCell(`G${sr}`).value = s.qty || null; style(sws.getCell(`G${sr}`), {bold:true, fill:'FFF1F5F9'});
+        sws.getCell(`H${sr}`).value = s.man || null; style(sws.getCell(`H${sr}`), {bold:true, fill:'FFF1F5F9'});
+        style(sws.getCell(`I${sr}`), {fill:'FFF1F5F9'});
+        sr++;
+      });
+      gq2 += s.qty; gm2 += s.man;
+    });
+  });
+  if (sr === 6) { sws.mergeCells('B6:I6'); sws.getCell('B6').value = 'No subcontractors added'; style(sws.getCell('B6'), {bold:false}); sr++; }
+  sws.mergeCells(`B${sr}:F${sr}`); sws.getCell(`B${sr}`).value = 'TOTAL';
+  style(sws.getCell(`B${sr}`), {h:'right', bold:true, fill:'FFE2E8F0'});
+  sws.getCell(`G${sr}`).value = gq2 || null; style(sws.getCell(`G${sr}`), {bold:true, fill:'FFE2E8F0'});
+  sws.getCell(`H${sr}`).value = gm2 || null; style(sws.getCell(`H${sr}`), {bold:true, fill:'FFE2E8F0'});
+  style(sws.getCell(`I${sr}`), {fill:'FFE2E8F0'});
+  const buf = await wb.xlsx.writeBuffer();
+  const url = URL.createObjectURL(new Blob([buf], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+  const a = document.createElement('a'); a.href = url; a.download = `DMR ${p.name} ${ui.date}.xlsx`;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
+/* ============ Activity database ============ */
+// All projects and Back buttons at the top of each database page. Added inside each page's own redraw, so they stay after edits.
+function dbNavHtml(){
+  return '<div class="ph-top ph-compact"><button class="btn" data-dbprojects>← All projects</button><button class="btn" data-dbback>← Back</button></div>';
+}
+function renderActivity(){
+  const k = ui.actDisc, mains = S.act[k] || [];
+  const tabs = DISCS.map(D => `<button class="wd ${k === D.k ? 'on' : ''}" style="--c:${D.col}" data-adisc="${D.k}">${D.n}<b>${D.letter}</b></button>`).join('');
+  const cards = mains.map(m => {
+    const sum = m.subs.reduce((a, s) => a + (+s.w || 0), 0), ok = Math.abs(sum - 100) < 0.01;
+    return `<section class="act-card">
+      <div class="act-h"><span class="no">${actNo(k, m.id)}</span><input class="cell" data-am="${m.id}" value="${esc(m.name)}" title="Main activity"><span class="badge ${ok ? 'ok' : 'bad'}" data-msum="${m.id}">${+sum.toFixed(2)}% ${ok ? '✓' : '· should total 100%'}</span><button class="x" data-aact="delmain" data-mid="${m.id}" title="Remove main activity">×</button></div>
+      <table><thead><tr><th class="l">Sub activity</th><th class="n" style="width:120px">Weightage %</th><th></th></tr></thead>
+      <tbody>${m.subs.map(s => `<tr><td><span class="no">${actNo(k, m.id, s.id)}</span><input class="cell" data-as="${s.id}" data-af="name" value="${esc(s.name)}"></td>
+        <td class="n"><input class="cell num" type="number" step="0.01" min="0" max="100" data-as="${s.id}" data-af="w" data-mid="${m.id}" value="${+s.w}"></td>
+        <td><button class="x" data-aact="delsub" data-sid="${s.id}" title="Remove">×</button></td></tr>`).join('') || '<tr><td colspan="3" class="muted">No sub activities yet</td></tr>'}</tbody></table>
+      <div class="addrow"><input class="inp" data-newsub="${m.id}" placeholder="New sub activity"><input class="inp num" type="number" step="0.01" min="0" data-neww="${m.id}" placeholder="Weight %" style="width:110px"><button class="btn" data-aact="addsub" data-mid="${m.id}">+ Sub activity</button></div>
+    </section>`;
+  }).join('');
+  $('#v-activity').innerHTML = `${dbNavHtml()}
+    <div class="wd-tabs">${tabs}</div>
+    <div class="addbar">
+      <label class="lbl">New main activity<input class="inp" id="newMain" style="width:300px" placeholder="Main activity name"></label>
+      <button class="btn p" data-aact="addmain">+ Main activity</button>
+      <span style="flex:1"></span>
+      <button class="btn" data-aact="reset" title="Restore the MGC default list for this discipline">Restore MGC default</button>
+    </div>
+    <div class="hint" style="margin:-4px 0 12px">Weightage is the share of each sub activity inside its main activity, so each main activity should total 100%. Daily % main = sum of (weightage × % sub done).</div>
+    <div class="act-grid">${cards || '<div class="empty">No main activities. Add one above.</div>'}</div>`;
+}
+function refreshActBadges(){
+  const k = ui.actDisc;
+  (S.act[k] || []).forEach(m => {
+    const sum = m.subs.reduce((a, s) => a + (+s.w || 0), 0), ok = Math.abs(sum - 100) < 0.01;
+    const b = document.querySelector(`[data-msum="${m.id}"]`);
+    if (b) { b.className = 'badge ' + (ok ? 'ok' : 'bad'); b.textContent = `${+sum.toFixed(2)}% ${ok ? '✓' : '· should total 100%'}`; }
+  });
+}
+
+/* ============ Sub contractor database ============ */
+function renderSubDb(){
+  const rows = S.subs.map(s => `<tr data-sdb="${s.id}">
+      <td><input class="cell" data-sdf="name" value="${esc(s.name)}"></td>
+      ${SUB_DISCS.map(SD => `<td class="c"><input type="checkbox" data-sdcb="${SD.k}" ${s.discs.includes(SD.k) ? 'checked' : ''} title="${SD.n}"></td>`).join('')}
+      <td class="c"><button class="x" data-sdb-act="del" title="Remove">×</button></td></tr>`).join('');
+  $('#v-subdb').innerHTML = `${dbNavHtml()}
+    <div class="addbar">
+      <label class="lbl">Subcontractor name<input class="inp" id="sdbName" style="width:340px" placeholder="Company name"></label>
+      <div class="lbl">Disciplines<div class="discbox" style="margin:4px 0 0">${SUB_DISCS.map(SD => `<label class="pill-cb"><input type="checkbox" id="sdbNew_${SD.k}" ${SD.k === 'EL' ? 'checked' : ''}> ${SD.n}</label>`).join('')}</div></div>
+      <button class="btn p" data-sdb-act="add">+ Add subcontractor</button>
+    </div>
+    <div class="rep"><div class="tbl"><table>
+      <thead><tr><th class="l">Subcontractor</th>${SUB_DISCS.map(SD => `<th>${SD.n}</th>`).join('')}<th></th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="7" class="empty">No subcontractors yet.</td></tr>'}</tbody></table></div></div>
+    <div class="hint" style="margin-top:10px">Tick every discipline a subcontractor works in. Only subcontractors ticked for a discipline are offered in that discipline's sub contractor sheet.</div>`;
+}
+
+function renderLabDb(){
+  const rows = (S.labsup || []).map(x => `<tr data-lbdb="${x.id}">
+      <td><input class="cell" data-lbf="name" value="${esc(x.name)}"></td>
+      ${DISCS.map(D => `<td class="c"><input type="checkbox" data-lbcb="${D.k}" ${(x.discs || []).includes(D.k) ? 'checked' : ''} title="${D.n}"></td>`).join('')}
+      <td class="c"><button class="x" data-lbdb-act="del" title="Remove">×</button></td></tr>`).join('');
+  $('#v-labdb').innerHTML = `${dbNavHtml()}
+    <div class="addbar">
+      <label class="lbl">Labour supplier name<input class="inp" id="lbName" style="width:340px" placeholder="Labour supplier name"></label>
+      <div class="lbl">Disciplines<div class="discbox" style="margin:4px 0 0">${DISCS.map(D => `<label class="pill-cb"><input type="checkbox" id="lbNew_${D.k}" ${D.k === 'EL' ? 'checked' : ''}> ${D.n}</label>`).join('')}</div></div>
+      <button class="btn p" data-lbdb-act="add">+ Add labour supplier</button>
+    </div>
+    <div class="rep"><div class="tbl"><table>
+      <thead><tr><th class="l">Labour supplier</th>${DISCS.map(D => `<th>${D.n}</th>`).join('')}<th></th></tr></thead>
+      <tbody>${rows || `<tr><td colspan="${DISCS.length + 2}" class="empty">No labour suppliers yet.</td></tr>`}</tbody></table></div></div>
+    <div class="hint" style="margin-top:10px">Tick every discipline a labour supplier works in. Only suppliers ticked for a discipline are offered in that discipline's labour supplier section.</div>`;
+}
+
+/* ============ Event wiring ============ */
+// Databases are opened from inside a project (admin only). Back returns to that project.
+document.addEventListener('click', e => {
+  const n = e.target.closest('[data-dbnav]');
+  if (n) { go(n.dataset.dbnav, {editId: null, editMode: false}); return; }
+  if (e.target.closest('[data-dbprojects]')) { go('projects'); return; }
+  const b = e.target.closest('[data-dbback]');
+  if (b) { if (ui.pid) go('project', {psec: 'hub', editId: null, editMode: false}); else go('projects'); }
+});
+$('#btnLog').addEventListener('click', () => { ui.showLog = !ui.showLog; renderLog(); });
+$('#btnUndo').addEventListener('click', undo);
+$('#btnRedo').addEventListener('click', redo);
+// Ctrl+Z / Ctrl+Y (Ctrl+Shift+Z also redoes). Inside text fields the browser keeps its own undo.
+document.addEventListener('keydown', e => {
+  const t = e.target || {}, tag = t.tagName || '';
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || t.isContentEditable) return;
+  if (!(e.ctrlKey || e.metaKey)) return;
+  const k = e.key.toLowerCase();
+  if (k === 'z' && !e.shiftKey) { e.preventDefault(); undo(); }
+  else if (k === 'y' || (k === 'z' && e.shiftKey)) { e.preventDefault(); redo(); }
+});
+$('#btnAdmin').addEventListener('click', () => go('admin', {editId: null, editMode: false}));
+$('#btnSignout').addEventListener('click', () => { writeSession(null); go('projects'); });
+
+// Sign in
+$('#v-login').addEventListener('click', async e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.id === 'loginBtn') {
+    const em = ($('#loginEmail').value || '').trim().toLowerCase();
+    if (!userByEmail(em)) { toast('This email has no access. Ask the admin to add it.', true); return; }
+    writeSession({role: 'user', email: em}); go('projects'); return;
+  }
+  if (b.id === 'loginAdminBtn') {
+    if (!(await checkAdminPw($('#loginPw').value))) { toast('Wrong admin password', true); return; }
+    writeSession({role: 'admin'}); go('admin'); return;
+  }
+});
+
+// Admin: password, users and project access
+$('#v-admin').addEventListener('click', async e => {
+  const b = e.target.closest('[data-acc]'); if (!b || !isAdmin()) return;
+  const a = b.dataset.acc;
+  if (a === 'setpw') {
+    const p1 = $('#admPw1').value, p2 = $('#admPw2').value;
+    if (p1.length < 6) { toast('Use at least 6 characters', true); return; }
+    if (p1 !== p2) { toast('The two passwords do not match', true); return; }
+    const wasOn = gateOn();
+    await setAdminPw(p1);
+    save(); writeSession({role: 'admin'}); render();
+    toast(wasOn ? 'Admin password changed' : 'Access control is on');
+    return;
+  }
+  if (a === 'offbtn') {
+    if (!armed(b)) return;
+    S.access = {adminHash: null, users: []}; save(); writeSession(null); render(); toast('Access control is off');
+    return;
+  }
+  if (a === 'adduser') {
+    const em = ($('#newEmail').value || '').trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { toast('Enter a valid email address', true); return; }
+    if (userByEmail(em)) { toast('This user already exists', true); return; }
+    S.access.users.push({email: em, projects: []}); save(); render();
+    toast('User added. Tick the projects they can open.');
+    return;
+  }
+  if (a === 'deluser') {
+    if (!armed(b)) return;
+    const em = b.dataset.em;
+    S.access.users = S.access.users.filter(u => u.email !== em); save(); render();
+  }
+});
+$('#v-admin').addEventListener('change', e => {
+  const t = e.target;
+  if (!isAdmin() || !['proj', 'sec'].includes(t.dataset.acc)) return;
+  const u = userByEmail(t.dataset.em); if (!u) return;
+  const pid = t.dataset.pid;
+  if (t.dataset.acc === 'proj') {
+    u.projects = t.checked ? [...new Set([...u.projects, pid])] : u.projects.filter(x => x !== pid);
+    t.closest('td').querySelectorAll('.secs input').forEach(i => { i.disabled = !t.checked; });
+  } else {
+    const next = t.checked ? [...new Set([...secList(u, pid), t.dataset.sec])] : secList(u, pid).filter(x => x !== t.dataset.sec);
+    u.secs = u.secs || {}; u.secs[pid] = SECS.filter(x => next.includes(x));
+  }
+  save();
+});
+
+// Projects
+$('#v-projects').addEventListener('click', e => {
+  const b = e.target.closest('[data-p]'); if (!b) return;
+  const a = b.dataset.p, p = proj(ui.editId);
+  if (a === 'open') {
+    if (!canProj(b.dataset.id)) { toast('You do not have access to this project', true); return; }
+    ui.pid = b.dataset.id; ui.editId = null; ui.editMode = false; ui.disc = 'EL'; ui.psec = 'hub'; ui.view = 'project'; render(); window.scrollTo(0, 0); return;
+  }
+  if (!isAdmin()) return;
+  if (a === 'edit') { ui.editId = b.dataset.id; ui.editMode = false; renderProjects(); $('.ed-card') && $('.ed-card').scrollIntoView({behavior:'smooth', block:'start'}); return; }
+  if (a === 'toggle') { ui.editMode = !ui.editMode; renderProjects(); return; }
+  if (a === 'close') { ui.editId = null; ui.editMode = false; renderProjects(); return; }
+  if (a === 'backup') { backupAll(); return; }
+  if (a === 'add') {
+    const np = {id: 'p' + uid(), name: 'New project ' + (S.projects.length + 1), kind:'', owner:'', consultant:'', contractor:'', asof: todayIso(), maps: [], ths: []};
+    S.projects.push(np); ui.editId = np.id; ui.editMode = true; save(); renderProjects(); return;
+  }
+  if (!p) return;
+  if (a === 'addtype') {
+    ensureTypes(p);
+    const k = ($('#newTypeName').value || '').trim(), c = $('#newTypeCol').value || '#6b7280';
+    if (!k) { toast('Type a name for the villa type', true); return; }
+    if (shownTypes(p).some(x => x[0] === k)) { toast('This villa type is already in the project', true); return; }
+    if (!p.types.some(x => x[0] === k)) p.types.push([k, c]);
+    p.keep = (p.keep || []).concat(k).filter((x, i, arr) => arr.indexOf(x) === i);
+    save(); renderProjects(); return;
+  }
+  if (a === 'deltype') {
+    ensureTypes(p);
+    const k = b.dataset.k;
+    if (ptypes(p)[k]) { toast('Villas use this type. Remove those villas first.', true); return; }
+    p.types = p.types.filter(x => x[0] !== k); p.keep = (p.keep || []).filter(x => x !== k); save(); renderProjects(); return;
+  }
+  if (a === 'addth') { p.ths.push({th: 'TH-' + String(p.ths.length + 1).padStart(2, '0'), v: {}, blocks: []}); }
+  else if (a === 'delth') { if (!armed(b)) return; p.ths.splice(+b.dataset.ti, 1); }
+  else if (a === 'addblock') { const t = p.ths[+b.dataset.ti]; t.blocks = t.blocks || []; t.blocks.push({name: 'B' + (t.blocks.length + 1), v: {}}); syncTh(t); }
+  else if (a === 'delblock') { const t = p.ths[+b.dataset.ti]; t.blocks.splice(+b.dataset.bi, 1); syncTh(t); }
+  else if (a === 'delmap') { p.maps.splice(+b.dataset.mi, 1); }
+  else if (a === 'cover') { const [m] = p.maps.splice(+b.dataset.mi, 1); p.maps.unshift(m); }
+  else if (a === 'del') {
+    const typed = (($('#pdelName') || {}).value || '').trim();
+    if (typed !== p.name.trim()) return;
+    S.projects = S.projects.filter(x => x.id !== p.id); delete S.reports[p.id]; if (S.prog) delete S.prog[p.id];
+    ui.editId = null; ui.editMode = false;
+  }
+  save(); renderProjects();
+});
+$('#v-projects').addEventListener('input', e => {
+  if (e.target.id !== 'pdelName') return;
+  const p = proj(ui.editId), btn = $('#pdelBtn');
+  if (btn && p) btn.disabled = e.target.value.trim() !== p.name.trim();
+});
+$('#v-projects').addEventListener('change', async e => {
+  const t = e.target, p = proj(ui.editId);
+  if (!isAdmin()) return;
+  if (t.id === 'restoreFile' && t.files && t.files[0]) { restoreAll(t.files[0]); return; }
+  if (t.dataset.mapInput && p) { await addMaps(p, [...t.files]); return; }
+  if (!p) return;
+  if (t.dataset.pf) { p[t.dataset.pf] = t.value.trim(); if (t.dataset.pf === 'name') { /* name updated */ } }
+  else if (t.dataset.f === 'th') {
+    const i = +t.dataset.ti, nv = t.value.trim() || 'TH'; const old = t.dataset.old;
+    if (old !== nv) renameTh(p.id, old, nv);
+    p.ths[i].th = nv;
+  }
+  else if (t.dataset.f === 'v') { const th = p.ths[+t.dataset.ti], n = +t.value || 0; if (n) th.v[t.dataset.k] = n; else delete th.v[t.dataset.k]; }
+  else if (t.dataset.f === 'bn') {
+    const th = p.ths[+t.dataset.ti], blk = th.blocks[+t.dataset.bi], nv = t.value.trim() || blk.name;
+    if (t.dataset.old !== nv) renameBlock(p.id, th.th, t.dataset.old, nv);
+    blk.name = nv;
+  }
+  else if (t.dataset.f === 'bm') {
+    const th = p.ths[+t.dataset.ti], bl = th.blocks[+t.dataset.bi];
+    bl.v = bl.v || {};
+    const n = Math.max(0, Math.round(+t.value || 0));
+    if (n) bl.v[t.dataset.k] = n; else delete bl.v[t.dataset.k];
+    syncTh(th);
+  }
+  else if (t.dataset.tc) { ensureTypes(p); p.types = p.types.map(([k, c]) => k === t.dataset.tc ? [k, t.value] : [k, c]); }
+  else return;
+  ensureTypes(p);
+  save(); renderProjects();
+});
+
+// Project daily report
+/* ============ Import a foreman's Markdown manpower report (v1.47) ============ */
+function mdClean(s){ return String(s == null ? '' : s).replace(/[`*]/g, '').replace(/\s+/g, ' ').trim(); }
+function mdBlank(s){ const c = mdClean(s); return !c || c === '-' || /^\(blank\)$/i.test(c) || /^\(faint/i.test(c); }
+function mdCells(line){ let s = line.trim(); if (s.startsWith('|')) s = s.slice(1); if (s.endsWith('|')) s = s.slice(0, -1); return s.split('|').map(c => c.trim()); }
+function mdActName(s){ return mdClean(s).replace(/\(.*?\)/g, '').replace(/\s+/g, ' ').trim().toUpperCase(); }
+function mdNum(s){ if (mdBlank(s)) return null; const m = mdClean(s).match(/^(\d+(?:\.\d+)?)/); return m ? +m[1] : null; }
+function mdDate(s){ const m = mdClean(s).match(/(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4})/); if (!m) return null; let y = +m[3]; if (y < 100) y += 2000; return y + '-' + String(m[2]).padStart(2, '0') + '-' + String(m[1]).padStart(2, '0'); }
+function mdFloor(s){ const m = mdClean(s).match(/\b(GF|1F|2F)\b/i); return m ? m[1].toUpperCase() : ''; }
+
+// Reads a foreman's TH text such as "TH6-B1", "17 B4", "01" or "TH05B2". Ranges and unknown TH numbers are kept as a note only.
+function mdLocate(p, text){
+  const raw = mdClean(text);
+  if (mdBlank(raw)) return {th: '', block: '', note: ''};
+  const note = 'Foreman TH: ' + raw;
+  const c = raw.replace(/\(.*?\)/g, '').trim();
+  if (!c) return {th: '', block: '', note};
+  if (/^(?:TH\s*-?\s*)?\d+\s*-\s*\d+\b/i.test(c)) return {th: '', block: '', note};
+  const m = c.match(/^(?:TH\s*-?\s*)?0*(\d{1,2})(?!\d)/i);
+  if (!m) return {th: '', block: '', note};
+  const t = (p.ths || []).find(x => { const n = String(x.th).match(/(\d+)$/); return n && +n[1] === +m[1]; });
+  if (!t) return {th: '', block: '', note};
+  const bm = c.match(/B\s*(\d)/i);
+  const want = bm ? 'B' + bm[1] : '';
+  if (!want) return {th: t.th, block: '', note: ''};
+  if ((t.blocks || []).some(b => String(b.name).toUpperCase() === want)) return {th: t.th, block: want, note: ''};
+  return {th: t.th, block: '', note};
+}
+
+// Finds the activity in the database. Slab works exist per floor, so the floor and main activity pick one.
+function mdFindSub(k, mainName, actName, floor){
+  const want = mdActName(actName);
+  const cands = [];
+  (S.act[k] || []).forEach(m => m.subs.forEach(s => { if (mdActName(s.name) === want) cands.push({m, s}); }));
+  if (cands.length <= 1) return cands[0] || null;
+  const mw = mdActName(mainName);
+  let c = cands.filter(x => x.m.name.toUpperCase() === mw);
+  if (c.length === 1) return c[0];
+  c = cands.filter(x => mw && x.m.name.toUpperCase().includes(mw));
+  if (floor) { const f = c.filter(x => x.m.name.toUpperCase().startsWith(floor)); if (f.length) return f[0]; }
+  if (c.length === 1) return c[0];
+  return Object.assign({ambiguous: true}, c[0] || cands[0]);
+}
+
+// Chooses the report line for an activity: the same TH and block, else an empty line, else a new line for that activity.
+function pickRow(d, k, cand, loc){
+  const rows = d[k].rows.filter(r => r.sid === cand.s.id);
+  if (loc.th) { const same = rows.find(r => r.th === loc.th && (r.block || '') === (loc.block || '')); if (same) return same; }
+  const empty = rows.find(r => !r.th && !r.block && r.pct == null && !r.rem && LAB.every(x => !((r.lab || {})[x])));
+  if (empty) return empty;
+  const nr = newRow(cand.m.id, cand.s.id, cand.m.name, cand.s.name);
+  d[k].rows.splice(d[k].rows.indexOf(rows[rows.length - 1]) + 1, 0, nr);
+  return nr;
+}
+
+// Reads the Markdown into tables, the project name, the date and the per-discipline details. Nothing is saved here.
+function parseManpowerMd(text){
+  const out = {project: '', date: null, tables: [], meta: {}};
+  let sec = null, header = null;
+  for (const raw of String(text).split(/\r?\n/)) {
+    const line = raw.trim();
+    if (!line) { header = null; continue; }
+    const h = line.match(/^##\s+(?:\d+\.\s*)?(.+)$/);
+    if (h) {
+      const t = h[1].toUpperCase();
+      sec = t.includes('PLUMBING') ? 'PL' : t.includes('HVAC') ? 'HV' : t.includes('ELECTRICAL') ? 'EL' : t.includes('SUB CONTRACTOR') ? 'SUB' : null;
+      header = null; continue;
+    }
+    if (line.startsWith('|')) {
+      const cells = mdCells(line);
+      if (cells.every(c => /^:?-+:?$/.test(c))) continue;
+      if (!header) { header = cells.map(c => mdClean(c).toLowerCase()); continue; }
+      if (sec) out.tables.push({sec, header, cells});
+      continue;
+    }
+    const kv = line.match(/^\*?\s*\*\*([^*]+?):\*\*\s*(.*)$/);
+    if (kv) {
+      const key = kv[1].trim().toLowerCase(), val = kv[2].trim();
+      if (!sec && key === 'project' && !out.project) out.project = mdClean(val).toUpperCase();
+      else if (!sec && key === 'date' && !out.date) out.date = mdDate(val);
+      else if (sec) { out.meta[sec] = out.meta[sec] || {}; out.meta[sec][key] = val; }
+    }
+  }
+  return out;
+}
+
+// Writes the parsed report into the project and date it names (falls back to the open project and date).
+function applyManpowerImport(parsed){
+  const named = parsed.project, warnings = [];
+  let p = (S.projects || []).find(x => named && x.name.toUpperCase() === named);
+  if (!p) p = curProj();
+  if (named && p.name.toUpperCase() !== named) warnings.push('Project "' + named + '" is not in this app, so the report went into ' + p.name + '.');
+  const date = parsed.date || ui.date;
+  const d = dayOf(p.id, date);
+  const res = {p, date, warnings, lines: 0, subs: 0, notes: []};
+  const supSum = {EL: {st: 0, sh: 0}, PL: {st: 0, sh: 0}, HV: {st: 0, sh: 0}};
+
+  parsed.tables.forEach(tb => {
+    const {sec, header, cells} = tb;
+    const at = pred => header.findIndex(pred);
+    if (sec === 'SUB') {
+      const cDisc = at(h => h.startsWith('discipline')), cSub = at(h => h.startsWith('sub contractor'));
+      const cAct = at(h => h === 'activity'), cTh = at(h => h.startsWith('th no')), cQty = at(h => h.startsWith('completed'));
+      const cMan = at(h => h === 'manpower'), cRem = at(h => h === 'remarks');
+      const discRaw = mdClean(cells[cDisc]).toUpperCase();
+      const dk = discRaw.includes('HVAC') ? 'HV' : discRaw.includes('ELECTRICAL') ? 'EL' : discRaw.includes('PLUMBING') ? 'PL' : discRaw === 'LPG' ? 'LPG' : '';
+      const subName = mdClean(cells[cSub]).toUpperCase();
+      if (!dk || !subName) return;
+      const act = mdBlank(cells[cAct]) ? '' : mdClean(cells[cAct]);
+      const loc = mdLocate(p, cells[cTh]);
+      const qtyText = mdBlank(cells[cQty]) ? '' : mdClean(cells[cQty]);
+      const qty = /^\d+$/.test(qtyText) ? +qtyText : null;
+      const man = mdNum(cells[cMan]);
+      const remark = mdBlank(cells[cRem]) ? '' : mdClean(cells[cRem]);
+      if (!act && !loc.th && qty == null && man == null && !remark) return;
+      const sub = S.subs.find(x => x.name.toUpperCase() === subName);
+      if (!sub) { warnings.push('Sub contractor "' + subName + '" is not in the Sub contractor database.'); return; }
+      const rem = [remark, qtyText && qty == null ? 'Completed: ' + qtyText : '', loc.note].filter(Boolean).join('; ');
+      let e = d.subs.find(x => x.disc === dk && x.sid === sub.id && x.th === loc.th && x.act === act);
+      if (!e) { e = {id: 'x' + uid(), disc: dk, sid: sub.id, sname: sub.name, act, th: loc.th, block: '', qty: null, man: null, rem: ''}; d.subs.push(e); }
+      e.block = loc.block; e.qty = qty; e.man = man; e.rem = rem;
+      res.subs++;
+      return;
+    }
+    if (!['PL', 'HV', 'EL'].includes(sec)) return;
+    const cMain = at(h => h === 'main activity'), cAct = at(h => h === 'activity');
+    const cTh = at(h => h.startsWith('th no')), cPct = at(h => h.startsWith('% done')), cRem = at(h => h === 'remarks');
+    const labCols = {};
+    header.forEach((h, i) => {
+      if (h.startsWith('mgc')) labCols[i] = h.includes('charge') ? 'mch' : h.includes('asst') ? 'ma' : 'mt';
+      else if (h.startsWith('labour supplier')) labCols[i] = h.includes('helper') ? 'sh' : 'st';
+    });
+    if (cAct < 0 || mdBlank(cells[cAct])) return;
+    const actRaw = mdClean(cells[cAct]), thRaw = cTh >= 0 ? cells[cTh] : '';
+    const loc = mdLocate(p, thRaw);
+    const cand = mdFindSub(sec, cMain >= 0 ? mdClean(cells[cMain]) : '', actRaw, mdFloor(thRaw));
+    if (!cand) { warnings.push(sec + ': "' + mdActName(actRaw) + '" is not in the activity database.'); return; }
+    if (cand.ambiguous) warnings.push(sec + ': "' + mdActName(actRaw) + '" fits more than one floor; used ' + cand.m.name + '.');
+    const pct = cPct >= 0 ? mdNum(cells[cPct]) : null;
+    const remark = cRem >= 0 && !mdBlank(cells[cRem]) ? mdClean(cells[cRem]) : '';
+    const lab = {};
+    Object.entries(labCols).forEach(([i, key]) => {
+      const v = mdNum(cells[i]);
+      if (v == null) return;
+      if (key === 'st' || key === 'sh') supSum[sec][key] += v; else lab[key] = v;
+    });
+    if (!loc.th && pct == null && !Object.keys(lab).length && !remark && !loc.note) return;
+    const r = pickRow(d, sec, cand, loc);
+    if (loc.th) { r.th = loc.th; r.block = loc.block; }
+    if (pct != null) r.pct = Math.max(0, Math.min(100, pct));
+    r.lab = r.lab || {};
+    LAB_MGC.forEach(x => { if (lab[x] != null) r.lab[x] = lab[x]; });
+    const parts = [remark, loc.note].filter(Boolean);
+    if (parts.length) r.rem = parts.join('; ');
+    if (r.th && r.pct != null) progStore(S.prog, p.id, sec, r.th, r.block || '', r.sid, r.pct);
+    res.lines++;
+  });
+
+  ['EL', 'PL', 'HV'].forEach(k => {
+    const m = parsed.meta[k] || {};
+    const by = m['prepared by'] ? mdClean(m['prepared by']) : '';
+    if (by && !mdBlank(by)) d[k].by = by;
+    const hours = m['working hours'] ? mdClean(m['working hours']) : '';
+    if (hours && !mdBlank(hours)) d.hours = hours;
+    ['top margin note', 'bottom margin note'].forEach(key => { if (m[key] && !mdBlank(m[key])) res.notes.push(k + ': ' + mdClean(m[key])); });
+    if (supSum[k].st || supSum[k].sh) {
+      d[k].lsup = d[k].lsup || [];
+      let e = d[k].lsup.find(x => x.name === 'Imported labour supplier');
+      if (!e) { e = {id: 'ls' + uid(), sid: null, name: 'Imported labour supplier', lab: {}, rem: ''}; d[k].lsup.push(e); }
+      e.lab = {st: supSum[k].st, sh: supSum[k].sh};
+    }
+  });
+  return res;
+}
+
+async function importMd(input){
+  const f = input.files && input.files[0];
+  input.value = '';
+  if (!f) return;
+  const parsed = parseManpowerMd(await f.text());
+  if (!parsed.tables.length) { toast('No report tables were found in that file.', true); return; }
+  const res = applyManpowerImport(parsed);
+  ui.pid = res.p.id; ui.date = res.date;
+  save(); renderProject();
+  let msg = 'Imported ' + res.lines + ' activity lines and ' + res.subs + ' sub contractor lines into ' + res.p.name + ' for ' + res.date + '.';
+  if (res.notes.length) msg += ' Margin notes (not stored): ' + res.notes.join(' | ');
+  if (res.warnings.length) msg += ' To check: ' + res.warnings.slice(0, 4).join(' ');
+  toast(msg, res.warnings.length > 0);
+}
+
+$('#v-project').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.tab) { ui.disc = b.dataset.tab; renderProject(); return; }
+  if (b.dataset.ptab) { ui.disc = b.dataset.ptab; renderProject(); return; }
+  if (b.dataset.pgscroll) { const w = b.closest('.pg-outer').querySelector('.pg-wrap'); w.scrollBy({left: 300 * +b.dataset.pgscroll, behavior: 'smooth'}); return; }
+  if (b.dataset.pv === 'back') { go('projects'); return; }
+  if (b.dataset.pv === 'import-md') { document.getElementById('mdImport').click(); return; }
+  if (b.dataset.psec) { ui.psec = b.dataset.psec; renderProject(); window.scrollTo(0, 0); return; }
+  if (b.dataset.pv === 'hub') { ui.psec = 'hub'; renderProject(); window.scrollTo(0, 0); return; }
+  if (b.dataset.pm === 'backup') { pmBackup(); return; }
+  if (b.dataset.pm === 'restore') { document.getElementById('pmFile').click(); return; }
+  if (b.dataset.pv === 'pdf') { exportPdf(); return; }
+  if (b.dataset.pv === 'xlsx') { exportXlsx(); return; }
+  if (b.dataset.lsup === 'add') {
+    const sid = (document.getElementById('lsupSel') || {}).value;
+    if (!sid) { toast('Choose a labour supplier first', true); return; }
+    const sup = (S.labsup || []).find(x => x.id === sid); if (!sup) return;
+    const dd = curDay(); dd[ui.disc].lsup = dd[ui.disc].lsup || [];
+    dd[ui.disc].lsup.push({id: 'ls' + uid(), sid, name: sup.name, lab: {}, rem: ''});
+    save(); renderProject(); return;
+  }
+  if (b.dataset.lsup === 'del') {
+    if (!armed(b)) return;
+    const dd = curDay(); dd[ui.disc].lsup = (dd[ui.disc].lsup || []).filter(x => x.id !== b.dataset.lsid);
+    save(); renderProject(); return;
+  }
+  if (b.dataset.act) { rowAction(b); return; }
+  if (b.dataset.sb === 'add') { addSubRow(); return; }
+  if (b.dataset.sact === 'del') { subRowDelete(b); return; }
+});
+$('#v-project').addEventListener('change', e => {
+  const t = e.target, p = curProj(), d = curDay();
+  if (t.id === 'pmFile') { pmRestore(t); return; }
+  if (t.id === 'mdImport') { importMd(t); return; }
+  if (t.id === 'rDate') { ui.date = t.value || todayIso(); renderProject(); return; }
+  if (t.dataset.psid) {
+    const v = t.value === '' ? null : Math.max(0, Math.min(100, +t.value || 0));
+    t.value = v == null ? '' : v;
+    progStore(S.prog, p.id, t.dataset.pdisc, t.dataset.pth, t.dataset.pblk, t.dataset.psid, v);
+    save();
+    const left = t.closest('td').querySelector('.pg-left');
+    if (left) left.textContent = v == null ? 'Left 100%' : 'Left ' + (100 - v) + '%';
+    return;
+  }
+  if (t.id === 'rHours') { d.hours = t.value.trim(); save(); return; }
+  if (t.dataset.by) { d[t.dataset.by].by = t.value.trim(); save(); return; }
+  if (t.id === 'sbDisc') { ui.subAddDisc = t.value; renderProject(); return; }
+  if (t.id === 'sbTh') { const bl = document.getElementById('sbBlock'); bl.innerHTML = blockOptsHtml(p, t.value, ''); bl.disabled = !(p.ths.find(x => x.th === t.value) || {blocks: []}).blocks.length; return; }
+  if (t.dataset.lsf) {
+    const sp = (d[ui.disc].lsup || []).find(x => x.id === t.dataset.lsid); if (!sp) return;
+    if (t.dataset.lsf === 'rem') sp.rem = t.value.trim();
+    else { sp.lab = sp.lab || {}; const v = t.value === '' ? null : Math.max(0, +t.value || 0); sp.lab[t.dataset.lsf] = v; t.value = v == null ? '' : v; }
+    save(); refreshTotals(ui.disc); return;
+  }
+  const tr = t.closest('tr[data-rid]');
+  if (tr && t.dataset.f) {
+    const k = ui.disc, r = d[k].rows.find(x => x.id === tr.dataset.rid); if (!r) return;
+    const f = t.dataset.f;
+    // Redrawing the page keeps the scroll position, so the window does not jump when a TH or block is picked.
+    if (f === 'th') { r.th = t.value; r.block = ''; save(); renderKeepScroll(); return; }
+    if (f === 'block') { r.block = t.value; save(); return; }
+    if (f === 'pct') { r.pct = t.value === '' ? null : Math.max(0, Math.min(100, +t.value)); t.value = r.pct == null ? '' : r.pct; progStore(S.prog, ui.pid, k, r.th, r.block || '', r.sid, r.pct); save(); refreshMain(k); return; }
+    if (f === 'rem') { r.rem = t.value.trim(); save(); return; }
+    if (f === 'sup') { r.sup = r.sup || {}; const v = r.sup[t.dataset.sid] = r.sup[t.dataset.sid] || {}; v[t.dataset.x] = t.value === '' ? null : Math.max(0, +t.value || 0); save(); refreshTotals(k); return; }
+    if (LAB_MGC.includes(f)) { r.lab = r.lab || {}; r.lab[f] = t.value === '' ? null : Math.max(0, +t.value || 0); save(); refreshTotals(k); return; }
+    return;
+  }
+  const sr = t.closest('tr[data-sr]');
+  if (sr && t.dataset.sf) {
+    const x = (d.subs || []).find(y => y.id === sr.dataset.sr); if (!x) return;
+    const f = t.dataset.sf;
+    if (f === 'th') { x.th = t.value; x.block = ''; save(); renderKeepScroll(); return; }
+    if (f === 'block') { x.block = t.value; save(); return; }
+    if (f === 'act') x.act = t.value.trim();
+    if (f === 'qty') x.qty = t.value === '' ? null : Math.max(0, +t.value || 0);
+    if (f === 'man') x.man = t.value === '' ? null : Math.max(0, +t.value || 0);
+    if (f === 'rem') x.rem = t.value.trim();
+    save(); refreshSubTotals();
+  }
+});
+// The base line of each database sub activity is permanent. Lines added with +TH or All TH can be removed.
+// Lines for a sub activity that is no longer in the database (orphans) can always be removed.
+function isBaseRow(rows, r, k){
+  return !!findSub(k, r.sid) && rows.find(x => x.sid === r.sid) === r;
+}
+function rowAction(b){
+  const tr = b.closest('tr[data-rid]'), k = ui.disc, d = curDay();
+  if (!tr) return;
+  const rows = d[k].rows, r = rows.find(x => x.id === tr.dataset.rid); if (!r) return;
+  const a = b.dataset.act;
+  if (a === 'addth') {
+    const nr = newRow(r.mid, r.sid, r.mname, r.sname);
+    rows.splice(rows.indexOf(r) + 1, 0, nr);
+  }
+  else if (a === 'del') {
+    if (isBaseRow(rows, r, k)) { toast('The base line of a sub activity cannot be deleted. Remove only the lines you added.', true); return; }
+    if (!b.dataset.armed) { b.dataset.armed = '1'; b.textContent = 'Sure?'; setTimeout(() => { if (b.isConnected) { b.removeAttribute('data-armed'); b.textContent = '×'; } }, 3000); return; }
+    rows.splice(rows.indexOf(r), 1);
+  }
+  save(); renderProject();
+}
+function addSubRow(){
+  const p = curProj(), d = curDay();
+  const disc = ui.subAddDisc, sid = document.getElementById('sbSub').value;
+  const sub = S.subs.find(s => s.id === sid);
+  if (!sub) { toast('Pick a subcontractor. Add new ones in the Sub contractor database.', true); return; }
+  const th = document.getElementById('sbTh').value, block = document.getElementById('sbBlock').value;
+  d.subs.push({id: 'x' + uid(), disc, sid, sname: sub.name, act: document.getElementById('sbAct').value.trim(), th, block: th ? block : '',
+    qty: document.getElementById('sbQty').value === '' ? null : +document.getElementById('sbQty').value,
+    man: document.getElementById('sbMan').value === '' ? null : +document.getElementById('sbMan').value,
+    rem: document.getElementById('sbRem').value.trim()});
+  save(); renderProject(); toast('Added ' + sub.name);
+}
+function subRowDelete(b){
+  if (!b.dataset.armed) { b.dataset.armed = '1'; b.textContent = 'Sure?'; setTimeout(() => { if (b.isConnected) { b.removeAttribute('data-armed'); b.textContent = '×'; } }, 3000); return; }
+  const tr = b.closest('tr[data-sr]'), d = curDay();
+  d.subs = d.subs.filter(x => x.id !== tr.dataset.sr);
+  save(); renderProject();
+}
+
+// Activity database
+$('#v-activity').addEventListener('click', e => {
+  const t = e.target.closest('[data-adisc]');
+  if (t) { ui.actDisc = t.dataset.adisc; renderActivity(); return; }
+  const b = e.target.closest('[data-aact]'); if (!b) return;
+  const k = ui.actDisc, a = b.dataset.aact;
+  if (a === 'addmain') {
+    const n = document.getElementById('newMain').value.trim(); if (!n) { document.getElementById('newMain').focus(); return; }
+    S.act[k].push({id: k + 'm' + uid(), name: n, subs: []});
+  }
+  else if (a === 'delmain') { if (!armed(b)) return; S.act[k] = S.act[k].filter(m => m.id !== b.dataset.mid); }
+  else if (a === 'addsub') {
+    const m = S.act[k].find(x => x.id === b.dataset.mid);
+    const n = document.querySelector(`[data-newsub="${m.id}"]`).value.trim(); if (!n) return;
+    const w = +document.querySelector(`[data-neww="${m.id}"]`).value || 0;
+    m.subs.push({id: m.id + 's' + uid(), name: n, w});
+  }
+  else if (a === 'delsub') { if (!armed(b)) return; S.act[k].forEach(m => { m.subs = m.subs.filter(s => s.id !== b.dataset.sid); }); }
+  else if (a === 'reset') {
+    if (!armed(b)) return;
+    S.act[k] = buildAct(ACT_SEED)[k];
+  }
+  save(); renderActivity();
+});
+$('#v-activity').addEventListener('change', e => {
+  const t = e.target, k = ui.actDisc;
+  if (t.dataset.am) { const m = findMain(k, t.dataset.am); if (m) m.name = t.value.trim() || m.name; save(); renderActivity(); return; }
+  if (t.dataset.as && t.dataset.af === 'name') { const f = findSub(k, t.dataset.as); if (f) f.s.name = t.value.trim() || f.s.name; save(); renderActivity(); return; }
+  if (t.dataset.as && t.dataset.af === 'w') { const f = findSub(k, t.dataset.as); if (f) f.s.w = Math.max(0, +t.value || 0); save(); refreshActBadges(); }
+});
+
+// Sub contractor database
+$('#v-subdb').addEventListener('click', e => {
+  const b = e.target.closest('[data-sdb-act]'); if (!b) return;
+  const a = b.dataset.sdbAct;
+  if (a === 'add') {
+    const n = document.getElementById('sdbName').value.trim(); if (!n) { document.getElementById('sdbName').focus(); return; }
+    const discs = SUB_DISCS.filter(SD => document.getElementById('sdbNew_' + SD.k).checked).map(SD => SD.k);
+    S.subs.push({id: 'sb' + uid(), name: n, discs}); save(); renderSubDb(); toast('Subcontractor added');
+  }
+  else if (a === 'del') {
+    if (!armed(b)) return;
+    S.subs = S.subs.filter(s => s.id !== b.closest('tr').dataset.sdb); save(); renderSubDb();
+  }
+});
+$('#v-labdb').addEventListener('click', e => {
+  const b = e.target.closest('[data-lbdb-act]'); if (!b) return;
+  if (b.dataset.lbdbAct === 'add') {
+    const n = document.getElementById('lbName').value.trim(); if (!n) { document.getElementById('lbName').focus(); return; }
+    const discs = DISCS.filter(D => document.getElementById('lbNew_' + D.k).checked).map(D => D.k);
+    S.labsup = S.labsup || []; S.labsup.push({id: 'lb' + uid(), name: n, discs}); save(); renderLabDb(); toast('Labour supplier added');
+  }
+  else if (b.dataset.lbdbAct === 'del') {
+    if (!armed(b)) return;
+    S.labsup = (S.labsup || []).filter(x => x.id !== b.closest('tr').dataset.lbdb); save(); renderLabDb();
+  }
+});
+$('#v-labdb').addEventListener('change', e => {
+  const t = e.target, tr = t.closest('tr[data-lbdb]'); if (!tr) return;
+  const x = (S.labsup || []).find(y => y.id === tr.dataset.lbdb); if (!x) return;
+  if (t.dataset.lbf === 'name') x.name = t.value.trim() || x.name;
+  if (t.dataset.lbcb) x.discs = DISCS.filter(D => tr.querySelector(`[data-lbcb="${D.k}"]`).checked).map(D => D.k);
+  save();
+});
+$('#v-subdb').addEventListener('change', e => {
+  const t = e.target, tr = t.closest('tr[data-sdb]'); if (!tr) return;
+  const s = S.subs.find(x => x.id === tr.dataset.sdb); if (!s) return;
+  if (t.dataset.sdf === 'name') s.name = t.value.trim() || s.name;
+  if (t.dataset.sdcb) s.discs = SUB_DISCS.filter(SD => tr.querySelector(`[data-sdcb="${SD.k}"]`).checked).map(SD => SD.k);
+  save();
+});
+
+/* ============ Backup and restore ============ */
+function backupAll(){
+  const blob = new Blob([JSON.stringify({app:'mep-daily-report', version: APP_VERSION, saved: new Date().toISOString(), ...S}, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = url; a.download = `MEP-daily-report-backup-${todayIso()}.json`; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+async function restoreAll(file){
+  try {
+    const data = JSON.parse(await file.text());
+    if (!Array.isArray(data.projects) || !data.act || !data.subs) throw new Error('Not a MEP daily report backup');
+    S = {projects: data.projects, act: data.act, subs: data.subs, labsup: data.labsup || [], reports: data.reports || {}, prog: data.prog || {}, access: data.access || S.access};
+    if (!data.prog) migrateProgress(S);
+    save(); ui.editId = null; renderProjects(); toast('Backup restored');
+  } catch (err) { toast(err.message || 'Could not restore this file', true); }
+}
+
+/* ============ Start ============ */
+render();
+</script>
+</body></html>
